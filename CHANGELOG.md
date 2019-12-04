@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.3
+
+*2019-12-04 - Update 198.2*
+
+- Reworked BlackMarketGui:populate_mods function, most compatibility issues should now be resolved.
+- BLT priority reverted to 0.
+
 ## v1.2
 
 *2019-08-08 - Update 197.2*
