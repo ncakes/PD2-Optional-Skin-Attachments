@@ -1,5 +1,14 @@
 # Changelog
 
+## v1.4
+
+*2020-01-02 - Update 199*
+
+- Fixed a bug in the base game where weapons could not be renamed even after the legendary skin was removed.
+- Fixed a bug where autobuy would purchase stat boosts.
+- Reworked code for deducting continental coins when autobuying mods.
+- Reworked code for checking skins that don't contain mods.
+
 ## v1.3
 
 *2019-12-04 - Update 198.2*
