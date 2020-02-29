@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.5
+
+*2020-02-29 - Update 199 Mark II*
+
+- Added support for new custom colors.
+- Fixed an issue on the Raven Admiral skin where applying the Short Barrel then switching to the Admiral Barrel would cause the foregrip to disappear.
+- Compatibility fixes for Suppressed Raven Admiral Barrel mod (to be released).
+
 ## v1.4
 
 *2020-01-02 - Update 199*
