@@ -10,8 +10,6 @@ This mod allows you to choose which attachments to use when applying weapon skin
 - **Prefer Shotgun Pack Buckshot:** Give the Gage Shotgun Pack 000 Buckshot priority when applying skins. When skins are applied or removed, the free 000 Buckshot will be replaced by the Gage Shotgun Pack 000 Buckshot if you own the Gage Shotgun Pack DLC.
 - **Save Mods On Missing Skins:** Try to keep attachments when skins are removed from Steam inventory.
 - **Choose Attachments in Previews:** Enable dialog menu for choosing attachments when previewing weapon skins.
-- **Optional Boosts:** Adds option to choose whether or not to apply stat boosts.
-- **Disable All Boosts:** Stops all skin stat boosts from being applied to weapons.
 - **Rename Legendary Skins:** Allow legendary skins to be renamed.
 - **Customize Legendary Skins:** Allow legendary skins to be unlocked so that they can be customized.
 - **Remove Legendary Mod Stats:** Remove stats from legendary weapon attachments.

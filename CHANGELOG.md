@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.6
+
+*2020-03-10 - Update 199 Mark II Hotfix 2*
+
+- Choosing stat boosts disabled due to sync issue.
+
 ## v1.5
 
 *2020-02-29 - Update 199 Mark II*
