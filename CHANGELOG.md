@@ -1,5 +1,17 @@
 # Changelog
 
+## v1.7
+
+*2020-03-20 - Update 199 Mark II Hotfix 2*
+
+- Improved legendary attachment handling for various weapons:
+	- Astatoz: Astatoz Foregrip's type has been changed to "foregrip" so that it will replace the default AMR-16 foregrip when applied to prevent clipping.
+	- Big Kahuna: Big Kahuna Stock now removes the default grip to prevent clipping.
+	- Demon: Demon Stock now removes the default grip to prevent clipping.
+	- Mars Ultor: Mars Ultor Barrel now removes the default barrel extension to prevent clipping.
+	- Vlad's Rodina: the default grip will no longer disappear when the Vlad's Rodina Stock is applied. Other grips can still be applied as normal to replace the default grip.
+- Fixed the name of the Santa's Slayers Laser.
+
 ## v1.6
 
 *2020-03-10 - Update 199 Mark II Hotfix 2*
