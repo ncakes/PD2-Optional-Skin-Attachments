@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.7.1
+
+*2020-03-20 - Update 199 Mark II Hotfix 2*
+
+- Fixed a bug where the default grip would not be removed on the Locomotive 12G and Reinfeld 880 when other grips were equipped (thanks de vuelta en el negocio).
+- Fixed a bug where the default barrel extension would not be removed on the Bootleg when other barrel extensions were equipped.
+
 ## v1.7
 
 *2020-03-20 - Update 199 Mark II Hotfix 2*
