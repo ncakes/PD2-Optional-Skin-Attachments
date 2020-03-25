@@ -24,6 +24,11 @@ This mod allows you to choose which attachments to use when applying weapon skin
 - This mod adds the ability to preview weapon modifications on locked legendary skins.
 - This mod fixes a bug in the base game where weapons could not be renamed even after the legendary skin was removed.
 
+## Known Issues
+
+- Previewing a weapon color completely removes the weapon texture (thanks ☢ Big Sky. (MDQ)).
+- Legendary mods on Akimbo Kobus 90 / Akimbo Judge are not validated. May implement in the future.
+
 ## Installation
 
 This mod requires [SuperBLT](https://superblt.znix.xyz).

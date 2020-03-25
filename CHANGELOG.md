@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.8
+
+*2020-03-26 - Update 199 Mark II Hotfix 2*
+
+- Reworked method for removing unusable legendary attachments from Akimbo Kobus 90 and Akimbo Judge to prevent sync issues.
+
 ## v1.7.1
 
 *2020-03-20 - Update 199 Mark II Hotfix 2*
