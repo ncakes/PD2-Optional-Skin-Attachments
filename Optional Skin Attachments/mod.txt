@@ -3,7 +3,7 @@
 	"description": "Adds options for choosing attachments when applying skins. Also improves support for legendary skins.",
 	"author": "github.com/ncakes",
 	"contact": "github.com/ncakes/PD2-Optional-Skin-Attachments",
-	"version": "1.8",
+	"version": "1.9",
 	"priority": 0,
 	"blt_version": 2,
 	"hooks": [

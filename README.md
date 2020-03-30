@@ -26,7 +26,6 @@ This mod allows you to choose which attachments to use when applying weapon skin
 
 ## Known Issues
 
-- Previewing a weapon color completely removes the weapon texture (thanks ☢ Big Sky. (MDQ)).
 - Legendary mods on Akimbo Kobus 90 / Akimbo Judge are not validated. May implement in the future.
 
 ## Installation
