@@ -1,5 +1,20 @@
 # Changelog
 
+## v2.0
+
+*2021-04-08 - Update 205*
+
+- Fixed a crash that could occur if custom weapon skins were uninstalled without first removing them from weapons.
+- Added option to set Immortal Python as default weapon color. Disabled by default.
+- Added option to choose default default paint scheme for weapon colors.
+- Added option to choose default wear for weapon colors.
+- Added option to choose default pattern scale for weapon colors.
+- Added a visual indicator when players use swapped skins (e.g. through SDSS). If a player in your lobby has equipped a swapped skin, it will be displayed as a default weapon icon over the rarity background of the skin.
+- Internal changes:
+	- Reworked hiding of legendary skins on akimbo weapon variants.
+	- Removed a useless quickplay check.
+	- Reworked handling of weapons skins with only default attachments.
+
 ## v1.9
 
 *2020-03-30 - Update 199 Mark II Hotfix 2*
