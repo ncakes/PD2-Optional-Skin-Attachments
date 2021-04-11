@@ -1,5 +1,12 @@
 # Changelog
 
+## v2.0.1
+
+*2021-04-11 - Update 205*
+
+- Remove stats option has been modified to remove all weapon stats except for concealment in order to prevent detection risk sync issues.
+- Midas Touch Barrel will now use the default position for the front sight post when equipping the Marksman Sight (to prevent the front sight post from floating in the air).
+
 ## v2.0
 
 *2021-04-08 - Update 205*
