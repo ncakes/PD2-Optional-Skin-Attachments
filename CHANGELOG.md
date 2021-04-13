@@ -1,5 +1,14 @@
 # Changelog
 
+## v3.0
+
+*2021-04-13 - Update 205*
+
+- Complete overhaul of the code to improve stability and performance.
+- Added the option to choose wear when previewing weapons. Enabled by default.
+- Save Mods On Missing Skins option is now always enabled and has been removed from the options menu.
+- Leaving the options menu now automatically triggers a Steam inventory update, so your legendary attachment visibility setting is updated immediately.
+
 ## v2.0.1
 
 *2021-04-11 - Update 205*
