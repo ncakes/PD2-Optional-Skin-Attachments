@@ -1,5 +1,11 @@
 # Changelog
 
+## v3.0.1
+
+*2021-04-14 - Update 205*
+
+- Hotfix for a crash when customizing weapon color (thanks Freyah).
+
 ## v3.0
 
 *2021-04-13 - Update 205*
