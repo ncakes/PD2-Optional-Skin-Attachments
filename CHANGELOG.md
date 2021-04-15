@@ -1,5 +1,11 @@
 # Changelog
 
+## v3.0.2
+
+*2021-04-15 - Update 205*
+
+- Fixed an issue in the base game that could cause a crash when the Judge Anarcho is equipped with a barrel extension (thanks Fly Action).
+
 ## v3.0.1
 
 *2021-04-14 - Update 205*
