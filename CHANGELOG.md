@@ -1,5 +1,11 @@
 # Changelog
 
+## v3.1
+
+*2021-05-26 - Update 207.1*
+
+- Tempfix for an issue where the Immortal Python default weapon color option wasn't being set.
+
 ## v3.0.2
 
 *2021-04-15 - Update 205*
