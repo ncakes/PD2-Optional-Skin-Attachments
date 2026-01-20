@@ -161,5 +161,5 @@ Hooks:PostHook(WeaponFactoryTweakData, "_init_legendary", "osa_post_WeaponFactor
 
 	--Midas Touch
 	--Stop barrel from shifting the front post of the Marksman Sight
-	self.parts.wpn_fps_pis_deagle_b_legend.override.wpn_upg_o_marksmansight_front = nil
+	--self.parts.wpn_fps_pis_deagle_b_legend.override.wpn_upg_o_marksmansight_front = nil
 end)

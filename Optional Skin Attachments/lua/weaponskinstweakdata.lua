@@ -52,3 +52,32 @@ Hooks:PostHook(BlackMarketTweakData, "_init_weapon_skins", "osa_post_BlackMarket
 	--Either way, this fixes the crash
 	table.insert(self.weapon_skins["judge_burn"].default_blueprint, "wpn_fps_pis_judge_b_standard")
 end)
+
+Hooks:PostHook(BlackMarketTweakData, "_init_weapon_skins", "osa_fix_rodina_quickmag", function(self)
+	local skin = self.weapon_skins.ak74_rodina
+	if not skin or not skin.parts then return end
+
+	local IDS_TEXTURE = Idstring("texture")
+	local missing = Idstring("units/payday2_cash/safes/sputnik/sticker/sticker_russian_flag_2_df")
+	local fallback = Idstring("units/payday2_cash/safes/sputnik/sticker/sticker_russian_flag_df")
+
+	local function fix_part(part_id)
+		local part = skin.parts[part_id]
+		if not part then return end
+		local key = Idstring("ak74_mag"):key()
+		local data = part[key]
+		if data and data.sticker then
+			local sticker = data.sticker
+			if type(sticker) == "string" then
+				sticker = Idstring(sticker)
+			end
+
+			if sticker:key() == missing:key() and not DB:has(IDS_TEXTURE, missing) then
+				data.sticker = fallback
+			end
+		end
+	end
+
+	fix_part("wpn_fps_upg_ak_m_quick")
+	fix_part("wpn_fps_ass_74_m_standard")
+end)

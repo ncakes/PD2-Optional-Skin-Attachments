@@ -1,5 +1,13 @@
 # Changelog
 
+## v3.2
+
+*2026-01-20 - Update 242*
+
+- Fixes for U242 courtesy of [6IX].
+	- Crashfix related to Midas Touch Barrel.
+	- Fix missing textures when using Vlad's Rodina skin with AK default magazine and Speed Pull Magazine.
+
 ## v3.1
 
 *2021-05-26 - Update 207.1*
