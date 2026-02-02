@@ -1,87 +1,87 @@
-dofile(ModPath .. "lua/setup.lua")
-
 --Set some adds/forbids to prevent legendary attachment clipping.
 --Do not add or delete legendary mods from uses_parts, can cause sync issues/cheater tags.
-Hooks:PostHook(WeaponFactoryTweakData, "init", "osa_post_WeaponFactoryTweakData_init", function(self)
-	--Big Kahuna / Demon
-	--Default body adds default grip
-	self.parts.wpn_fps_shot_r870_body_standard.adds = self.parts.wpn_fps_shot_r870_body_standard.adds or {}
-	table.insert(self.parts.wpn_fps_shot_r870_body_standard.adds, "wpn_fps_upg_m4_g_standard")
-
-	--Reinfeld and Locomotive grips forbid default grip
-	for _, part_id in pairs(self.wpn_fps_shot_r870.uses_parts) do
-		if self.parts[part_id] and self.parts[part_id].type == "grip" and part_id ~= "wpn_fps_upg_m4_g_standard" then
-			self.parts[part_id].forbids = self.parts[part_id].forbids or {}
-			if not table.contains(self.parts[part_id].forbids, "wpn_fps_upg_m4_g_standard") then
-				table.insert(self.parts[part_id].forbids, "wpn_fps_upg_m4_g_standard")
+Hooks:PostHook(WeaponFactoryTweakData, "init", "OSA-PostHook-WeaponFactoryTweakData:init", function(self)
+	local function safe_add_value(part_id, table_name, value)
+		if value ~= part_id and self.parts[part_id] then
+			self.parts[part_id][table_name] = self.parts[part_id][table_name] or {}
+			if not table.contains(self.parts[part_id][table_name], value) then
+				table.insert(self.parts[part_id][table_name], value)
 			end
 		end
 	end
+
+	--Big Kahuna / Demon
+	--Default body adds default grip
+	safe_add_value("wpn_fps_shot_r870_body_standard", "adds", "wpn_fps_upg_m4_g_standard")
+
+	--Reinfeld and Locomotive grips forbid default grip
+	for _, part_id in pairs(self.wpn_fps_shot_r870.uses_parts) do
+		if self.parts[part_id] and self.parts[part_id].type == "grip" then
+			safe_add_value(part_id, "forbids", "wpn_fps_upg_m4_g_standard")
+		end
+	end
 	for _, part_id in pairs(self.wpn_fps_shot_serbu.uses_parts) do
-		if self.parts[part_id] and self.parts[part_id].type == "grip" and part_id ~= "wpn_fps_upg_m4_g_standard" then
-			self.parts[part_id].forbids = self.parts[part_id].forbids or {}
-			if not table.contains(self.parts[part_id].forbids, "wpn_fps_upg_m4_g_standard") then
-				table.insert(self.parts[part_id].forbids, "wpn_fps_upg_m4_g_standard")
-			end
+		if self.parts[part_id] and self.parts[part_id].type == "grip" then
+			safe_add_value(part_id, "forbids", "wpn_fps_upg_m4_g_standard")
 		end
 	end
 
 	--Mars Ultor
 	--Default lower receiver adds default barrel extension
-	self.parts.wpn_fps_ass_tecci_lower_reciever.adds = self.parts.wpn_fps_ass_tecci_lower_reciever.adds or {}
-	table.insert(self.parts.wpn_fps_ass_tecci_lower_reciever.adds, "wpn_fps_ass_tecci_ns_standard")
+	safe_add_value("wpn_fps_ass_tecci_lower_reciever", "adds", "wpn_fps_ass_tecci_ns_standard")
 
 	--Bootleg barrel extensions forbid default barrel extension
 	for _, part_id in pairs(self.wpn_fps_ass_tecci.uses_parts) do
-		if self.parts[part_id] and self.parts[part_id].type == "barrel_ext" and part_id ~= "wpn_fps_ass_tecci_ns_standard" then
-			self.parts[part_id].forbids = self.parts[part_id].forbids or {}
-			if not table.contains(self.parts[part_id].forbids, "wpn_fps_ass_tecci_ns_standard") then
-				table.insert(self.parts[part_id].forbids, "wpn_fps_ass_tecci_ns_standard")
+		if self.parts[part_id] and self.parts[part_id].type == "barrel_ext" then
+			safe_add_value(part_id, "forbids", "wpn_fps_ass_tecci_ns_standard")
+		end
+	end
+
+	--Midas Touch
+	--Stop barrel from shifting the front post of the Marksman Sight
+	--Fixed in base game in U242 (and bricked OSA)
+	--self.parts.wpn_fps_pis_deagle_b_legend.override.wpn_upg_o_marksmansight_front = nil
+
+	--Santa's Slayers Laser on single-hand Crosskill
+	--Previously only available in AOLA but legendary attachments were added to the single-hand Crosskill in U242
+	local whitelist = {"wpn_upg_o_marksmansight_rear"}
+	for _, part_id in pairs(self.wpn_fps_pis_1911.uses_parts) do
+		if not table.contains(whitelist, part_id) then
+			if self.parts[part_id] and self.parts[part_id].type == "sight" then
+				safe_add_value("wpn_fps_pis_1911_fl_legendary", "forbids", part_id)
 			end
 		end
 	end
 end)
 
---Set up legendary parts
-Hooks:PostHook(WeaponFactoryTweakData, "_init_legendary", "osa_post_WeaponFactoryTweakData__init_legendary", function(self)
+--Set up legendary parts, do it here so AOLA can copy.
+Hooks:PostHook(WeaponFactoryTweakData, "_init_legendary", "OSA-PostHook-WeaponFactoryTweakData:_init_legendary", function(self)
+	local function safe_add_value(part_id, table_name, value)
+		if self.parts[part_id] and value ~= part_id then
+			self.parts[part_id][table_name] = self.parts[part_id][table_name] or {}
+			if not table.contains(self.parts[part_id][table_name], value) then
+				table.insert(self.parts[part_id][table_name], value)
+			end
+		end
+	end
+
 	--Set up legendary parts
 	local new_values = {
-		pcs = {},--Without this, the part gets flagged as inaccessible
 		is_a_unlockable = true,--Set unlockable so it can't be dropped/bought
 		is_legendary_part = true,--OSA tracking
 		has_description = true--So that we can set custom descriptions
 	}
 
-	--Set new values, remove stats, set name/description
-	for skin, part_list in pairs(OSA._gen_1_mods) do
-		for _, part_id in pairs(part_list) do
+	--Set new values, set description
+	for skin, data in pairs(OSA.data.skins) do
+		for _, part_id in pairs(data.parts) do
 			--Set new values
 			for k, v in pairs(new_values) do
 				self.parts[part_id][k] = v
 			end
 
-			--Remove stats except for concealment (to prevent detection risk discrepancies as client)
-			if OSA._settings.osa_remove_stats then
-				local val = 0
-				local conceal = 0
-				if self.parts[part_id].stats then
-					val = self.parts[part_id].stats.value or val
-					conceal = self.parts[part_id].stats.concealment or conceal
-				end
-				--Don't remove stats on SRAB
-				--Note: SRAB 1.1 and future legendary stat mods will PreHook _set_inaccessibles so removing stats here won't be an issue anymore
-				--SRAB 1.1 will use the identifier _G.SuppressedRavenAdmiralBarrel so we just keep this old check here for backwards compatiblity until everyone updates
-				if not _G.SRAB or part_id ~= "wpn_fps_sho_ksg_b_legendary" then
-					self.parts[part_id].stats = {
-						value = val,
-						concealment = conceal
-					}
-				end
-			end
-
-			--Set name and description
-			self.parts[part_id].name_id = "osa_bm_"..part_id
-			self.parts[part_id].desc_id = "osa_bm_req_"..skin
+			--Set description
+			self.parts[part_id].desc_id = "bm_req_"..skin.."_osa_desc"
 
 			--Set sub_type to "laser" so the color can be changed
 			if self.parts[part_id].perks then
@@ -93,59 +93,31 @@ Hooks:PostHook(WeaponFactoryTweakData, "_init_legendary", "osa_post_WeaponFactor
 		end
 	end
 
-	--Localization for Suppressed Raven Admiral Barrel mod
-	--Legacy support for _G.SRAB identifier used by v1.0
-	if _G.SuppressedRavenAdmiralBarrel or _G.SRAB then
-		self.parts.wpn_fps_sho_ksg_b_legendary.name_id = "osa_bm_wpn_fps_sho_ksg_b_legendary_sup"
-	end
-
-	--Localization for Suppressed Judge Anarcho Barrel mod
-	if _G.SuppressedJudgeAnarchoBarrel then
-		self.parts.wpn_fps_pis_judge_b_legend.name_id = "osa_bm_wpn_fps_pis_judge_b_legend_sup"
-	end
-
-	--Localization for Suppressed AMR-16 Astatoz Barrel mod
-	if _G.SuppressedAMR16AstatozBarrel then
-		self.parts.wpn_fps_ass_m16_b_legend.name_id = "osa_bm_wpn_fps_ass_m16_b_legend_sup"
-	end
-
-	--Localization for Suppressed Breaker 12G Apex Barrel mod
-	if _G.SuppressedBreaker12GApexBarrel then
-		self.parts.wpn_fps_sho_boot_b_legendary.name_id = "osa_bm_wpn_fps_sho_boot_b_legendary_sup"
-	end
-
-	--Localization for Suppressed Deagle Midas Touch Barrel mod
-	if _G.SuppressedDeagleMidasTouchBarrel then
-		self.parts.wpn_fps_pis_deagle_b_legend.name_id = "osa_bm_wpn_fps_pis_deagle_b_legend_sup"
-	end
-
-	--Localization for Suppressed Locomotive 12G Demon Barrel mod
-	if _G.SuppressedLocomotive12GDemonBarrel then
-		self.parts.wpn_fps_shot_shorty_b_legendary.name_id = "osa_bm_wpn_fps_shot_shorty_b_legendary_sup"
-	end
+	--Fix incorrect name_ids
+	self.parts.wpn_fps_pis_deagle_b_legend.name_id = "bm_wp_deagle_b_legend"
+	self.parts.wpn_fps_fla_mk2_body_fierybeast.name_id = "bm_wp_fla_mk2_body_fierybeast"
+	self.parts.wpn_fps_rpg7_m_grinclown.name_id = "bm_wp_rpg7_m_grinclown"
+	self.parts.wpn_fps_shot_r870_s_legendary.name_id = "bm_wp_r870_s_legend"
+	self.parts.wpn_fps_shot_r870_fg_legendary.name_id = "bm_wp_r870_fg_legend"
+	self.parts.wpn_fps_snp_model70_b_legend.name_id = "bm_wp_model70_b_legend"
+	self.parts.wpn_fps_snp_model70_s_legend.name_id = "bm_wp_model70_s_legend"
 
 	--Fix foregrip on Raven Admiral
 	--Without this, the foregrip will disappear if you apply the Short Barrel then switch to the Admiral Barrel
-	--Use insert so we don't overwrite SRAB's forbids
-	self.parts.wpn_fps_sho_ksg_b_legendary.forbids = self.parts.wpn_fps_sho_ksg_b_legendary.forbids or {}
-	table.insert(self.parts.wpn_fps_sho_ksg_b_legendary.forbids, "wpn_fps_sho_ksg_fg_short")
-	self.parts.wpn_fps_sho_ksg_b_legendary.adds = self.parts.wpn_fps_sho_ksg_b_legendary.adds or {}
-	table.insert(self.parts.wpn_fps_sho_ksg_b_legendary.adds, "wpn_fps_sho_ksg_fg_standard")
+	safe_add_value("wpn_fps_sho_ksg_b_legendary", "forbids", "wpn_fps_sho_ksg_fg_short")
+	safe_add_value("wpn_fps_sho_ksg_b_legendary", "adds", "wpn_fps_sho_ksg_fg_standard")
 
 	--Big Kahuna
 	--Legendary stock forbids default grip
-	self.parts.wpn_fps_shot_r870_s_legendary.forbids = self.parts.wpn_fps_shot_r870_s_legendary.forbids or {}
-	table.insert(self.parts.wpn_fps_shot_r870_s_legendary.forbids, "wpn_fps_upg_m4_g_standard")
+	safe_add_value("wpn_fps_shot_r870_s_legendary", "forbids", "wpn_fps_upg_m4_g_standard")
 
 	--Demon
 	--Legendary stock forbids default grip
-	self.parts.wpn_fps_shot_shorty_s_legendary.forbids = self.parts.wpn_fps_shot_shorty_s_legendary.forbids or {}
-	table.insert(self.parts.wpn_fps_shot_shorty_s_legendary.forbids, "wpn_fps_upg_m4_g_standard")
+	safe_add_value("wpn_fps_shot_shorty_s_legendary", "forbids", "wpn_fps_upg_m4_g_standard")
 
 	--Mars Ultor
 	--Legendary barrel forbids default barrel extension
-	self.parts.wpn_fps_ass_tecci_b_legend.forbids = self.parts.wpn_fps_ass_tecci_b_legend.forbids or {}
-	table.insert(self.parts.wpn_fps_ass_tecci_b_legend.forbids, "wpn_fps_ass_tecci_ns_standard")
+	safe_add_value("wpn_fps_ass_tecci_b_legend", "forbids", "wpn_fps_ass_tecci_ns_standard")
 
 	--Astatoz
 	--Legendary foregrip type changed to "foregrip" (instead of "gadget")
@@ -154,12 +126,6 @@ Hooks:PostHook(WeaponFactoryTweakData, "_init_legendary", "osa_post_WeaponFactor
 	--Vlad's Rodina
 	--Legendary stock adds default grip
 	--Legendary grip forbids default grip
-	self.parts.wpn_upg_ak_s_legend.adds = self.parts.wpn_upg_ak_s_legend.adds or {}
-	table.insert(self.parts.wpn_upg_ak_s_legend.adds, "wpn_upg_ak_g_standard")
-	self.parts.wpn_upg_ak_g_legend.forbids = self.parts.wpn_upg_ak_g_legend.forbids or {}
-	table.insert(self.parts.wpn_upg_ak_g_legend.forbids, "wpn_upg_ak_g_standard")
-
-	--Midas Touch
-	--Stop barrel from shifting the front post of the Marksman Sight
-	--self.parts.wpn_fps_pis_deagle_b_legend.override.wpn_upg_o_marksmansight_front = nil
+	safe_add_value("wpn_upg_ak_s_legend", "adds", "wpn_upg_ak_g_standard")
+	safe_add_value("wpn_upg_ak_g_legend", "forbids", "wpn_upg_ak_g_standard")
 end)

@@ -1,0 +1,169 @@
+{
+	"skins": {
+		"ak74_rodina": {
+			"name": "Vlad's Rodina",
+			"icon": "guis/dlcs/cash/safes/sputnik/weapon_skins/ak74_rodina",
+			"parts": [
+				"wpn_fps_ass_74_b_legend",
+				"wpn_upg_ak_fg_legend",
+				"wpn_upg_ak_g_legend",
+				"wpn_upg_ak_s_legend",
+				"wpn_upg_ak_fl_legend"
+			]
+		},
+		"deagle_bling": {
+			"name": "Midas Touch",
+			"icon": "guis/dlcs/cash/safes/cf15/weapon_skins/deagle_bling",
+			"parts": [
+				"wpn_fps_pis_deagle_b_legend"
+			]
+		},
+		"flamethrower_mk2_fire": {
+			"name": "Dragon Lord",
+			"icon": "guis/dlcs/cash/safes/cop/weapon_skins/flamethrower_mk2_fire",
+			"parts": [
+				"wpn_fps_fla_mk2_body_fierybeast"
+			]
+		},
+		"rpg7_boom": {
+			"name": "Green Grin",
+			"icon": "guis/dlcs/cash/safes/cop/weapon_skins/rpg7_boom",
+			"parts": [
+				"wpn_fps_rpg7_m_grinclown"
+			]
+		},
+		"m134_bulletstorm": {
+			"name": "The Gimp",
+			"icon": "guis/dlcs/cash/safes/cop/weapon_skins/m134_bulletstorm",
+			"parts": [
+				"wpn_fps_lmg_m134_body_upper_spikey",
+				"wpn_fps_lmg_m134_barrel_legendary"
+			]
+		},
+		"p90_dallas_sallad": {
+			"name": "Alamo Dallas",
+			"icon": "guis/dlcs/cash/safes/dallas/weapon_skins/p90_dallas_sallad",
+			"parts": [
+				"wpn_fps_smg_p90_b_legend"
+			]
+		},
+		"r870_waves": {
+			"name": "Big Kahuna",
+			"icon": "guis/dlcs/cash/safes/surf/weapon_skins/r870_waves",
+			"parts": [
+				"wpn_fps_shot_r870_b_legendary",
+				"wpn_fps_shot_r870_s_legendary",
+				"wpn_fps_shot_r870_fg_legendary"
+			]
+		},
+		"x_1911_ginger": {
+			"name": "Santa's Slayers",
+			"icon": "guis/dlcs/cash/safes/flake/weapon_skins/x_1911_ginger",
+			"parts": [
+				"wpn_fps_pis_1911_g_legendary",
+				"wpn_fps_pis_1911_fl_legendary"
+			]
+		},
+		"model70_baaah": {
+			"name": "Don Pastrami",
+			"icon": "guis/dlcs/cash/safes/bah/weapon_skins/model70_baaah",
+			"parts": [
+				"wpn_fps_snp_model70_b_legend",
+				"wpn_fps_snp_model70_s_legend"
+			]
+		},
+		"par_wolf": {
+			"name": "Hungry Wolf",
+			"icon": "guis/dlcs/cash/safes/pack/weapon_skins/par_wolf",
+			"parts": [
+				"wpn_fps_lmg_svinet_b_standard",
+				"wpn_fps_lmg_svinet_s_legend"
+			]
+		},
+		"m16_cola": {
+			"name": "Astatoz",
+			"icon": "guis/dlcs/cash/safes/cola/weapon_skins/m16_cola",
+			"parts": [
+				"wpn_fps_ass_m16_b_legend",
+				"wpn_fps_ass_m16_fg_legend",
+				"wpn_fps_ass_m16_s_legend"
+			]
+		},
+		"judge_burn": {
+			"name": "Anarcho",
+			"icon": "guis/dlcs/cash/safes/burn/weapon_skins/judge_burn",
+			"parts": [
+				"wpn_fps_pis_judge_b_legend",
+				"wpn_fps_pis_judge_g_legend"
+			]
+		},
+		"boot_buck": {
+			"name": "Apex",
+			"icon": "guis/dlcs/cash/safes/buck/weapon_skins/boot_buck",
+			"parts": [
+				"wpn_fps_sho_boot_b_legendary",
+				"wpn_fps_sho_boot_fg_legendary",
+				"wpn_fps_sho_boot_o_legendary",
+				"wpn_fps_sho_boot_s_legendary"
+			]
+		},
+		"ksg_same": {
+			"name": "Admiral",
+			"icon": "guis/dlcs/cash/safes/same/weapon_skins/ksg_same",
+			"parts": [
+				"wpn_fps_sho_ksg_b_legendary"
+			]
+		},
+		"tecci_grunt": {
+			"name": "Mars Ultor",
+			"icon": "guis/dlcs/cash/safes/grunt/weapon_skins/tecci_grunt",
+			"parts": [
+				"wpn_fps_ass_tecci_b_legend",
+				"wpn_fps_ass_tecci_fg_legend",
+				"wpn_fps_ass_tecci_s_legend"
+			]
+		},
+		"serbu_lones": {
+			"name": "Demon",
+			"icon": "guis/dlcs/cash/safes/lones/weapon_skins/serbu_lones",
+			"parts": [
+				"wpn_fps_shot_shorty_b_legendary",
+				"wpn_fps_shot_shorty_fg_legendary",
+				"wpn_fps_shot_shorty_s_legendary"
+			]
+		},
+		"new_m14_lones": {
+			"name": "Plush Phoenix",
+			"icon": "guis/dlcs/cash/safes/lones/weapon_skins/new_m14_lones",
+			"parts": [
+				"wpn_fps_ass_m14_b_legendary",
+				"wpn_fps_ass_m14_body_legendary",
+				"wpn_fps_ass_m14_body_upper_legendary",
+				"wpn_fps_ass_m14_body_lower_legendary"
+			]
+		}
+	},
+	"weapon_to_skin": {
+		"ak74": "ak74_rodina",
+		"deagle": "deagle_bling",
+		"x_deagle": "deagle_bling",
+		"flamethrower_mk2": "flamethrower_mk2_fire",
+		"rpg7": "rpg7_boom",
+		"m134": "m134_bulletstorm",
+		"p90": "p90_dallas_sallad",
+		"x_p90": "p90_dallas_sallad",
+		"r870": "r870_waves",
+		"x_1911": "x_1911_ginger",
+		"colt_1911": "x_1911_ginger",
+		"model70": "model70_baaah",
+		"par": "par_wolf",
+		"m16": "m16_cola",
+		"judge": "judge_burn",
+		"x_judge": "judge_burn",
+		"boot": "boot_buck",
+		"ksg": "ksg_same",
+		"tecci": "tecci_grunt",
+		"serbu": "serbu_lones",
+		"new_m14": "new_m14_lones"
+	}
+}

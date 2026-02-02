@@ -1,0 +1,147 @@
+{
+	"menu_id": "osa_options_menu",
+	"parent_menu_id": "blt_options",
+	"title": "osa_options_menu_title",
+	"description": "osa_options_menu_desc",
+	"back_callback": "osa_callback_save",
+	"items": [
+		{
+			"type": "toggle",
+			"id": "osa_gen1_support",
+			"title": "osa_gen1_support_title",
+			"description": "osa_gen1_support_desc",
+			"callback": "osa_callback_toggle",
+			"value": "osa_gen1_support"
+		},
+		{
+			"type": "toggle",
+			"id": "osa_autobuy",
+			"title": "osa_autobuy_title",
+			"description": "osa_autobuy_desc",
+			"callback": "osa_callback_toggle",
+			"value": "osa_autobuy"
+		},
+		{
+			"type": "toggle",
+			"id": "osa_swap_buckshot",
+			"title": "osa_swap_buckshot_title",
+			"description": "osa_swap_buckshot_desc",
+			"callback": "osa_callback_toggle",
+			"value": "osa_swap_buckshot"
+		},
+		{
+			"type": "toggle",
+			"id": "osa_remove_beardlib_blueprints",
+			"title": "osa_remove_beardlib_blueprints_title",
+			"description": "osa_remove_beardlib_blueprints_desc",
+			"callback": "osa_callback_toggle",
+			"value": "osa_remove_beardlib_blueprints"
+		},
+		{
+			"type": "divider",
+			"size": 16
+		},
+		{
+			"type": "toggle",
+			"id": "osa_show_failure",
+			"title": "osa_show_failure_title",
+			"description": "osa_show_failure_desc",
+			"callback": "osa_callback_toggle",
+			"value": "osa_show_failure"
+		},
+		{
+			"type": "multiple_choice",
+			"id": "osa_preview_mode",
+			"title": "osa_preview_mode_title",
+			"description": "osa_preview_mode_desc",
+			"callback": "osa_callback_multi",
+			"items": [
+				"osa_preview_mode_auto",
+				"osa_preview_mode_wear",
+				"osa_preview_mode_mods",
+				"osa_preview_mode_both"
+			],
+			"value": "osa_preview_mode"
+		},
+		{
+			"type": "divider",
+			"size": 16
+		},
+		{
+			"type": "multiple_choice",
+			"id": "osa_paint_scheme",
+			"title": "osa_paint_scheme_title",
+			"description": "osa_paint_scheme_desc",
+			"callback": "osa_callback_multi",
+			"items": [
+				"osa_paint_scheme_off",
+				"menu_weapon_color_index_1",
+				"menu_weapon_color_index_2",
+				"menu_weapon_color_index_3",
+				"menu_weapon_color_index_4",
+				"menu_weapon_color_index_5",
+				"menu_weapon_color_index_6",
+				"menu_weapon_color_index_7",
+				"menu_weapon_color_index_8",
+				"menu_weapon_color_index_9",
+				"menu_weapon_color_index_10"
+			],
+			"value": "osa_paint_scheme"
+		},
+		{
+			"type": "multiple_choice",
+			"id": "osa_color_wear",
+			"title": "osa_color_wear_title",
+			"description": "osa_color_wear_desc",
+			"callback": "osa_callback_multi",
+			"items": [
+				"osa_color_wear_off",
+				"osa_color_wear_mint",
+				"osa_color_wear_fine",
+				"osa_color_wear_good",
+				"osa_color_wear_fair",
+				"osa_color_wear_poor"
+			],
+			"value": "osa_color_wear"
+		},
+		{
+			"type": "multiple_choice",
+			"id": "osa_pattern_scale",
+			"title": "osa_pattern_scale_title",
+			"description": "osa_pattern_scale_desc",
+			"callback": "osa_callback_multi",
+			"items": [
+				"osa_pattern_scale_off",
+				"menu_pattern_scale_small",
+				"menu_pattern_scale_medium",
+				"menu_pattern_scale_large"
+			],
+			"value": "osa_pattern_scale"
+		},
+		{
+			"type": "divider",
+			"size": 16
+		},
+		{
+			"type": "toggle",
+			"id": "osa_hide_unowned",
+			"title": "osa_hide_unowned_title",
+			"description": "osa_hide_unowned_desc",
+			"callback": "osa_callback_toggle",
+			"value": "osa_hide_unowned"
+		},
+		{
+			"type": "multiple_choice",
+			"id": "osa_swap_legend",
+			"title": "osa_swap_legend_title",
+			"description": "osa_swap_legend_desc",
+			"callback": "osa_callback_multi",
+			"items": [
+				"osa_swap_legend_auto",
+				"osa_swap_legend_aola",
+				"osa_swap_legend_off"
+			],
+			"value": "osa_swap_legend"
+		}
+	]
+}

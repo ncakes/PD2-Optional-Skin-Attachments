@@ -1,5 +1,32 @@
 # Changelog
 
+## v4.0
+
+*2026-02-02 - Update 242.2*
+
+- Major overhaul for compatibility with Super Duper Skin Swapper.
+- Streamlined options and reduced the number of dialog menus. Only one confirmation dialog is shown when applying a skin and the "Keep Attachments" option is highlighted by default.
+- Added an option to disable warning dialog when attachments could not be kept.
+- Legendary weapons:
+	- Legendary attachments are now shown on Akimbo Kobus 90 and Akimbo Judge.
+	- First generation legendary weapon support is now a single toggle in the options menu. Automatically enabled when using Super Duper Skin Swapper.
+	- Second generation legendary weapons can always be renamed.
+	- Prompt to unlock legendary skins for customization has been removed.
+- Custom weapon skins:
+	- Attachments on BeardLib custom weapon skins disabled by default. If a custom weapon skin grants you access to a DLC attachment you don't own, it will lead to a cheater tag. (Only an issue for custom weapon skins, real weapon skins override DLC checks.)
+	- Tempfix for custom BeardLib skins that use the old weapon icon path.
+- Fixed a bug in the base game where skins were not sorted in the correct order.
+- Tempfix for a bug in the base game where some skin-included attachments are added to your inventory.
+	- Since U242, some skin-included attachments for single/akimbo weapons are stored in a separate list (`special_blueprint`) due to compatibility issues between the single and akimbo version (e.g. sights are not available on akimbos). Not all checks in the base game have been updated to use the extra list.
+	- OSA overwrites `BlackMarketManager:_set_weapon_cosmetics` so this bug will not occur when switching skins.
+	- Tempfix for `BlackMarketManager:modify_weapon` to prevent this bug from occurring when changing attachments.
+- Removed features:
+	- U242 Vlad's Rodina texture fix removed (fixed in base game now).
+	- Continental Coin autobuy threshold removed.
+	- Default Immortal Python weapon color option removed.
+	- Option to remove legendary attachment stats removed.
+	- Localizations for Suppressed Judge Anarcho Barrel and Suppressed Raven Admiral Barrel removed.
+
 ## v3.2
 
 *2026-01-20 - Update 242*

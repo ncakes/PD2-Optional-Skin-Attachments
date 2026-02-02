@@ -1,47 +1,39 @@
-dofile(ModPath .. "lua/setup.lua")
-
 --Warning: removing default_blueprint can trigger false-positives in the anti-piracy code if not done properly.
---v3.0: do not touch default blueprint at all, instead set a flag "osa_no_attachments" to mark fake attachment skins
-Hooks:PostHook(BlackMarketTweakData, "_init_weapon_skins", "osa_post_BlackMarketTweakData__init_weapon_skins", function(self, tweak_data)
+--Should also check special_blueprint after U242.
+Hooks:PostHook(BlackMarketTweakData, "_init_weapon_skins", "OSA-PostHook-BlackMarketTweakData:_init_weapon_skins", function(self, tweak_data)
+	--Force legendary support if SDSS detected
+	--This is early enough that legendary features will be properly enabled
+	if _G.SDSS and not OSA.settings.osa_gen1_support then
+		OSA.settings.osa_gen1_support = true
+		OSA:save_settings()
+	end
+
+	--Set default pattern scale
+	if OSA.settings.osa_pattern_scale > 1 then
+		self.weapon_color_pattern_scale_default = OSA.settings.osa_pattern_scale - 1
+	end
+
+	--Remove empty blueprints from skins without attachments
+	--Almost everything has been fixed in the base game, just hardcode these
+	local no_attachments = {"b682_skf", "r93_css", "c96_dss", "plainsrider_skullimov"}
+	for _, skin_id in pairs(no_attachments) do
+		self.weapon_skins[skin_id].default_blueprint = nil
+	end
+
+	--Remove unique name so that legendary skins can be renamed
 	for _, skin in pairs(self.weapon_skins) do
-		--Remove unique name so that legendary skins can be renamed
-		if skin.rarity == "legendary" and OSA._settings.osa_rename_legendary then
+		if not skin.locked then
+			--Rename gen2 legendary
 			skin.unique_name_id = nil
+		elseif OSA.settings.osa_gen1_support then
+			--Unlock gen1
+			skin.unique_name_id = nil
+			skin.locked = nil
 		end
 
-		--Fix skins that don't actually have attachments
-		if skin.default_blueprint and not skin.locked then
-			--Get factory_id, based on WeaponFactoryManager:get_factory_id_by_weapon_id
-			local weapon_id = skin.weapon_id
-			local factory_id
-			for id, data in pairs(tweak_data.upgrades.definitions) do
-				if data.category == "weapon" and data.weapon_id == weapon_id then
-					factory_id = data.factory_id
-					--Stop searching lmao
-					break
-				end
-			end
-			--Check if there are any non-default mods
-			if factory_id then
-				if tweak_data.weapon.factory[factory_id] then
-					local default_mods = tweak_data.weapon.factory[factory_id].default_blueprint
-					local no_attachments = true
-					for _, mod in pairs(skin.default_blueprint) do
-						if not table.contains(default_mods, mod) then
-							no_attachments = false
-							break
-						end
-					end
-					--In principle, since there are no default mods, we can safely delete the blueprint.
-					--But to be extra safe, we don't remove the blueprint anymore, we just set a flag instead.
-					--Note: because we don't remove the attachments, selecting the skin will still show stats menu. Minor issue, just ignore it.
-					--e.g. Gruber Kurz 00G, Gruber Kurz Under the Radar, CAR-4 Special Force
-					if no_attachments then
-						--skin.default_blueprint = nil
-						skin.osa_no_attachments = true
-					end
-				end
-			end
+		--Set "MODIFICATIONS INCLUDED" description for skins which have blueprints
+		if skin.rarity ~= "legendary" then
+			skin.desc_id = skin.default_blueprint and "osa_bm_has_attachments" or nil
 		end
 	end
 
@@ -50,34 +42,7 @@ Hooks:PostHook(BlackMarketTweakData, "_init_weapon_skins", "osa_post_BlackMarket
 	--Apparently it's because the Anarcho doesn't have the the default Judge barrel in its blueprint
 	--I guess for some reason the Anarcho barrel doesn't replace the default barrel?
 	--Either way, this fixes the crash
-	table.insert(self.weapon_skins["judge_burn"].default_blueprint, "wpn_fps_pis_judge_b_standard")
-end)
-
-Hooks:PostHook(BlackMarketTweakData, "_init_weapon_skins", "osa_fix_rodina_quickmag", function(self)
-	local skin = self.weapon_skins.ak74_rodina
-	if not skin or not skin.parts then return end
-
-	local IDS_TEXTURE = Idstring("texture")
-	local missing = Idstring("units/payday2_cash/safes/sputnik/sticker/sticker_russian_flag_2_df")
-	local fallback = Idstring("units/payday2_cash/safes/sputnik/sticker/sticker_russian_flag_df")
-
-	local function fix_part(part_id)
-		local part = skin.parts[part_id]
-		if not part then return end
-		local key = Idstring("ak74_mag"):key()
-		local data = part[key]
-		if data and data.sticker then
-			local sticker = data.sticker
-			if type(sticker) == "string" then
-				sticker = Idstring(sticker)
-			end
-
-			if sticker:key() == missing:key() and not DB:has(IDS_TEXTURE, missing) then
-				data.sticker = fallback
-			end
-		end
+	if not table.contains(self.weapon_skins["judge_burn"].default_blueprint, "wpn_fps_pis_judge_b_standard") then
+		table.insert(self.weapon_skins["judge_burn"].default_blueprint, "wpn_fps_pis_judge_b_standard")
 	end
-
-	fix_part("wpn_fps_upg_ak_m_quick")
-	fix_part("wpn_fps_ass_74_m_standard")
 end)
