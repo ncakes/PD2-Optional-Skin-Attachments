@@ -78,12 +78,6 @@ Hooks:Add("MenuManagerInitialize", "OSA-Hooks-MenuManagerInitialize", function(m
 	MenuCallbackHandler.osa_callback_save = function(self, item)
 		Mod:save_settings()
 		managers.blackmarket:osa_set_visible_parts()
-		if OSA.settings.osa_pattern_scale > 1 then
-			tweak_data.blackmarket.weapon_color_pattern_scale_default = OSA.settings.osa_pattern_scale - 1
-		else
-			--Hardcode revert to default
-			tweak_data.blackmarket.weapon_color_pattern_scale_default = 2
-		end
 	end
 
 	MenuHelper:LoadFromJsonFile(Mod.meta.menu_file, Mod, Mod.settings)
@@ -128,12 +122,17 @@ function OSA:get_choice_name(setting_id)
 end
 
 function OSA:set_weapon_color_defaults(data)
-	--Set color and paint at runtime. Pattern scale is a tweak_data change.
 	if self.settings.osa_color_wear > 1 then
 		data.cosmetic_quality = self:get_choice_name("osa_color_wear")
 	end
 	if self.settings.osa_paint_scheme > 1 then
 		data.cosmetic_color_index = self.settings.osa_paint_scheme - 1
+	end
+	--Default weapon color has no pattern scale so this does nothing at the moment
+	--Need to change MenuCustomizeWeaponColorInitiator:setup_node to set a default pattern scale when going from a color without patterns to one with patterns
+	--Do not change default pattern_scale in tweak_data, that affects other things like weapon skins (e.g. CAR-4 Stripe On, 5/7 AP Possessed)
+	if self.settings.osa_pattern_scale > 1 then
+		data.cosmetic_pattern_scale = self.settings.osa_pattern_scale - 1
 	end
 end
 
@@ -213,7 +212,6 @@ function OSA:weapon_cosmetics_handler(params)
 	})
 	QuickMenu:new(menu_title, menu_message, menu_options):Show()
 end
-
 
 function OSA:preview_wear_handler(params)
 	if not params.choose_wear then

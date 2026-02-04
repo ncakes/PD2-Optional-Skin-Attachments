@@ -1,5 +1,11 @@
 # Changelog
 
+## v4.0.1
+
+*2026-02-04 - Update 242.2*
+
+- Fixed an issue where default color pattern scale was being applied to weapon skins (thanks AkiraDragunDaishiyu).
+
 ## v4.0
 
 *2026-02-02 - Update 242.2*

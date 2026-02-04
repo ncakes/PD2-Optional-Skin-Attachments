@@ -8,11 +8,6 @@ Hooks:PostHook(BlackMarketTweakData, "_init_weapon_skins", "OSA-PostHook-BlackMa
 		OSA:save_settings()
 	end
 
-	--Set default pattern scale
-	if OSA.settings.osa_pattern_scale > 1 then
-		self.weapon_color_pattern_scale_default = OSA.settings.osa_pattern_scale - 1
-	end
-
 	--Remove empty blueprints from skins without attachments
 	--Almost everything has been fixed in the base game, just hardcode these
 	local no_attachments = {"b682_skf", "r93_css", "c96_dss", "plainsrider_skullimov"}
