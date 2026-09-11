@@ -3,39 +3,31 @@
 	"parent_menu_id": "blt_options",
 	"title": "osa_options_menu_title",
 	"description": "osa_options_menu_desc",
-	"back_callback": "osa_callback_save",
+	"back_callback": "osa_callback_back",
 	"items": [
 		{
 			"type": "toggle",
-			"id": "osa_gen1_support",
-			"title": "osa_gen1_support_title",
-			"description": "osa_gen1_support_desc",
+			"id": "gen1_legend_support",
+			"title": "osa_gen1_legend_support_title",
+			"description": "osa_gen1_legend_support_desc",
 			"callback": "osa_callback_toggle",
-			"value": "osa_gen1_support"
+			"value": "gen1_legend_support"
 		},
 		{
 			"type": "toggle",
-			"id": "osa_autobuy",
-			"title": "osa_autobuy_title",
-			"description": "osa_autobuy_desc",
+			"id": "hide_unowned_legend",
+			"title": "osa_hide_unowned_legend_title",
+			"description": "osa_hide_unowned_legend_desc",
 			"callback": "osa_callback_toggle",
-			"value": "osa_autobuy"
+			"value": "hide_unowned_legend"
 		},
 		{
 			"type": "toggle",
-			"id": "osa_swap_buckshot",
-			"title": "osa_swap_buckshot_title",
-			"description": "osa_swap_buckshot_desc",
+			"id": "autoswap_legend",
+			"title": "osa_autoswap_legend_title",
+			"description": "osa_autoswap_legend_desc",
 			"callback": "osa_callback_toggle",
-			"value": "osa_swap_buckshot"
-		},
-		{
-			"type": "toggle",
-			"id": "osa_remove_beardlib_blueprints",
-			"title": "osa_remove_beardlib_blueprints_title",
-			"description": "osa_remove_beardlib_blueprints_desc",
-			"callback": "osa_callback_toggle",
-			"value": "osa_remove_beardlib_blueprints"
+			"value": "autoswap_legend"
 		},
 		{
 			"type": "divider",
@@ -43,11 +35,39 @@
 		},
 		{
 			"type": "toggle",
-			"id": "osa_show_failure",
+			"id": "always_keep",
+			"title": "osa_always_keep_title",
+			"description": "osa_always_keep_desc",
+			"callback": "osa_callback_toggle",
+			"value": "always_keep"
+		},
+		{
+			"type": "toggle",
+			"id": "autobuy_missing",
+			"title": "osa_autobuy_missing_title",
+			"description": "osa_autobuy_missing_desc",
+			"callback": "osa_callback_toggle",
+			"value": "autobuy_missing"
+		},
+		{
+			"type": "toggle",
+			"id": "show_failure",
 			"title": "osa_show_failure_title",
 			"description": "osa_show_failure_desc",
 			"callback": "osa_callback_toggle",
-			"value": "osa_show_failure"
+			"value": "show_failure"
+		},
+		{
+			"type": "toggle",
+			"id": "remove_beardlib_blueprints",
+			"title": "osa_remove_beardlib_blueprints_title",
+			"description": "osa_remove_beardlib_blueprints_desc",
+			"callback": "osa_callback_toggle",
+			"value": "remove_beardlib_blueprints"
+		},
+		{
+			"type": "divider",
+			"size": 16
 		},
 		{
 			"type": "multiple_choice",
@@ -75,16 +95,16 @@
 			"callback": "osa_callback_multi",
 			"items": [
 				"osa_paint_scheme_off",
-				"menu_weapon_color_index_1",
-				"menu_weapon_color_index_2",
-				"menu_weapon_color_index_3",
-				"menu_weapon_color_index_4",
-				"menu_weapon_color_index_5",
-				"menu_weapon_color_index_6",
-				"menu_weapon_color_index_7",
-				"menu_weapon_color_index_8",
-				"menu_weapon_color_index_9",
-				"menu_weapon_color_index_10"
+				"osa_paint_scheme_1",
+				"osa_paint_scheme_2",
+				"osa_paint_scheme_3",
+				"osa_paint_scheme_4",
+				"osa_paint_scheme_5",
+				"osa_paint_scheme_6",
+				"osa_paint_scheme_7",
+				"osa_paint_scheme_8",
+				"osa_paint_scheme_9",
+				"osa_paint_scheme_10"
 			],
 			"value": "osa_paint_scheme"
 		},
@@ -112,36 +132,11 @@
 			"callback": "osa_callback_multi",
 			"items": [
 				"osa_pattern_scale_off",
-				"menu_pattern_scale_small",
-				"menu_pattern_scale_medium",
-				"menu_pattern_scale_large"
+				"osa_pattern_scale_small",
+				"osa_pattern_scale_medium",
+				"osa_pattern_scale_large"
 			],
 			"value": "osa_pattern_scale"
-		},
-		{
-			"type": "divider",
-			"size": 16
-		},
-		{
-			"type": "toggle",
-			"id": "osa_hide_unowned",
-			"title": "osa_hide_unowned_title",
-			"description": "osa_hide_unowned_desc",
-			"callback": "osa_callback_toggle",
-			"value": "osa_hide_unowned"
-		},
-		{
-			"type": "multiple_choice",
-			"id": "osa_swap_legend",
-			"title": "osa_swap_legend_title",
-			"description": "osa_swap_legend_desc",
-			"callback": "osa_callback_multi",
-			"items": [
-				"osa_swap_legend_auto",
-				"osa_swap_legend_aola",
-				"osa_swap_legend_off"
-			],
-			"value": "osa_swap_legend"
 		}
 	]
 }

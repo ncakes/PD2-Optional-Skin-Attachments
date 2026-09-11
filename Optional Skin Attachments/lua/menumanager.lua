@@ -1,16 +1,12 @@
 Hooks:PostHook(MenuManager, "init", "OSA-PostHook-MenuManager:init", function(...)
-	OSA:update_menu_options()
-
 	--Prevent disabling legendary support if using SDSS
 	if _G.SDSS then
-		local item = OSA:get_menu_item("osa_gen1_support")
-		item._enabled = false
+		ncUtils.Menu:disable_item("gen1_legend_support", OSA)
 	end
 
-	--Legendary swapping not yet implemented, disable option
-	if not _G.AOLA or true then
-		local item = OSA:get_menu_item("osa_swap_legend")
-		item._current_index = 3
-		item._enabled = false
+	--Legendary swapping requires AOLA
+	if not _G.AOLA then
+		ncUtils.Menu:set_item_value("autoswap_legend", false, OSA)
+		ncUtils.Menu:disable_item("autoswap_legend", OSA)
 	end
 end)

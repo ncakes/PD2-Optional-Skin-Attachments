@@ -1,129 +1,189 @@
 if _G.OSA then return end
+dofile(ModPath.."lua/ncUtils/init.lua")
 
 _G.OSA = {}
 OSA.meta = {
 	mod_path = ModPath,
-	save_path = SavePath,
+	loc_path = ModPath.."loc/",
+	language = "en",
 	menu_id = "osa_options_menu",
+	menu_callback_prefix = "osa",
 	menu_file = ModPath.."menu/options.json",
 	save_file = SavePath.."osa_settings.json",
 }
 
-function OSA:save_json(path, data)
-	local file = io.open(path, "w+")
-	file:write(json.encode(data))
-	file:close()
-end
-
-function OSA:load_json(path)
-	local file = io.open(path, "r")
-	local data = json.decode(file:read("*all")) or {}
-	file:close()
-	return data
-end
-
-function OSA:save_settings()
-	self:save_json(self.meta.save_file, self.settings)
-end
-
-function OSA:load_settings()
-	local file = io.open(self.meta.save_file, "r")
-	if file then
-		local data = json.decode(file:read("*all")) or {}
-		file:close()
-		for k, _ in pairs(self.settings) do
-			if data[k] ~= nil then
-				self.settings[k] = data[k]
-			end
-		end
-	end
-end
-
 OSA.settings = {
-	osa_gen1_support = true,
-	osa_autobuy = false,
-	osa_swap_buckshot = true,
-	osa_show_failure = true,
-	osa_remove_beardlib_blueprints = true,
+	gen1_legend_support = true,
+	hide_unowned_legend = false,
+	autoswap_legend = false,
+
+	always_keep = false,
+	autobuy_missing = false,
+	show_failure = true,
+	remove_beardlib_blueprints = true,
 
 	osa_preview_mode = 1,
 
 	osa_paint_scheme = 1,
 	osa_color_wear = 1,
 	osa_pattern_scale = 1,
-
-	osa_hide_unowned = false,
-	osa_swap_legend = 1,
 }
-OSA:load_settings()
-OSA.data = OSA:load_json(OSA.meta.mod_path.."data/gen1_legend.json")
+OSA.save_migration = {
+	{
+		file = SavePath.."osa_settings.json",
+		key_map = {
+			osa_gen1_support = "gen1_legend_support",
+			osa_hide_unowned = "hide_unowned_legend",
+			osa_autobuy = "autobuy_missing",
+			osa_show_failure = "show_failure",
+			osa_remove_beardlib_blueprints = "remove_beardlib_blueprints",
+		}
+	}
+}
+ncUtils.Settings:load(OSA)
+
+--Recommended settings when using SDSS
+OSA.sdss_preset = {
+	gen1_legend_support = true,--This is already force-enabled when SDSS is installed.
+	hide_unowned_legend = false,
+	autoswap_legend = true,--Will do nothing if AOLA is not installed so don't worry.
+
+	always_keep = true,
+	autobuy_missing = true,
+	show_failure = true,
+	remove_beardlib_blueprints = true,
+
+	osa_preview_mode = 1,
+}
+
+OSA.legend_data = ncUtils.FileIO:load_json(OSA.meta.mod_path.."data/legend_data.json")
 
 Hooks:Add("LocalizationManagerPostInit", "OSA-Hooks-LocalizationManagerPostInit", function(loc)
-	loc:load_localization_file(OSA.meta.mod_path.."localizations/english.json")
+	ncUtils.Localization:load(loc, OSA)
+
+	--Generate localizations for part names and "skin required" description
+	local ptd = tweak_data and tweak_data.weapon and tweak_data.weapon.factory and tweak_data.weapon.factory.parts
+	for skin_id, skin_data in pairs(OSA.legend_data) do
+		--Hardcode skin name, game doesn't localize it anyways
+		local skin_name = skin_data.name
+
+		--"Skin required" description
+		do
+			local k = "bm_req_legend_equipped_" .. skin_id
+			local v = loc:text("bm_req_legend_equipped_template", {skin = skin_name})
+			loc:add_localized_strings({[k] = v})
+		end
+
+		--Part names
+		for part_id, fallback_part_type in pairs(skin_data.parts) do
+			local k = ptd and ptd[part_id] and ptd[part_id].name_id
+			if k then
+				local part_type = ptd[part_id].legend_part_name_type or fallback_part_type
+				local v = loc:text("bm_legend_part_name_template_"..part_type, {skin = skin_name})
+				loc:add_localized_strings({[k] = v})
+			end
+		end
+	end
 end)
 
 Hooks:Add("MenuManagerInitialize", "OSA-Hooks-MenuManagerInitialize", function(menu_manager)
-	local Mod = OSA
+	ncUtils.Menu:register_default_callbacks(OSA)
 
-	MenuCallbackHandler.osa_callback_toggle = function(self, item)
-		Mod.settings[item:name()] = item:value() == "on"
-		Mod:update_menu_options()
-	end
-
-	MenuCallbackHandler.osa_callback_multi = function(self, item)
-		Mod.settings[item:name()] = item:value()
-		Mod:update_menu_options()
-	end
-
-	MenuCallbackHandler.osa_callback_save = function(self, item)
-		Mod:save_settings()
+	--Set visible parts and update BeardLib blueprints immediately
+	MenuCallbackHandler.osa_callback_back = function(self)
+		ncUtils.Settings:save(OSA)
 		managers.blackmarket:osa_set_visible_parts()
+		if OSA.settings.remove_beardlib_blueprints then
+			OSA:remove_custom_weapon_blueprints()
+		else
+			OSA:restore_custom_weapon_blueprints()
+		end
 	end
 
-	MenuHelper:LoadFromJsonFile(Mod.meta.menu_file, Mod, Mod.settings)
+	--If new user (no save) and using SDSS, use sdss_preset.
+	if _G.SDSS and not ncUtils.Settings:exists(OSA) then
+		for k, v in pairs(OSA.sdss_preset) do
+			OSA.settings[k] = v
+		end
+		ncUtils.Settings:save(OSA)
+	end
+
+	MenuHelper:LoadFromJsonFile(OSA.meta.menu_file, OSA, OSA.settings)
 end)
 
---Disable legendary attachments option if gen1 support is not enabled
---Visual change only
-function OSA:update_menu_options()
-	local item = self:get_menu_item("osa_hide_unowned")
-	if not self.settings.osa_gen1_support then
-		item.selected = 1
-		item._enabled = false
-		item:dirty_callback()
-	else
-		item.selected = self.settings.osa_hide_unowned and 1 or 2
-		item._enabled = true
-		item:dirty_callback()
+--Add SDSS preset button to menu
+Hooks:Add("MenuManagerBuildCustomMenus", "OSA-Hooks-MenuManagerBuildCustomMenus", function(menu_manager, nodes)
+	if not _G.SDSS then
+		return
 	end
+
+	MenuHelper:AddDivider({
+		id = "sdss_preset_divider",
+		size = 16,
+		menu_id = "osa_options_menu",
+		priority = -1,
+	})
+
+	MenuHelper:AddButton({
+		id = "apply_sdss_preset",
+		title = "osa_apply_sdss_preset_title",
+		desc = "osa_apply_sdss_preset_desc",
+		callback = "osa_callback_button",
+		menu_id = "osa_options_menu",
+		priority = -2,
+		disabled = false,
+	})
+end)
+
+function OSA:apply_sdss_preset_callback()
+	local menu_title = managers.localization:text("osa_dialog_title")
+	local menu_message = managers.localization:text("osa_dialog_apply_recommended")
+	local menu_options = {
+		{
+			text = managers.localization:text("dialog_apply"),
+			callback = function()
+				for k, v in pairs(self.sdss_preset) do
+					self.settings[k] = v
+					--Don't refresh disabled options
+					local item = ncUtils.Menu:get_item(k, self)
+					if item and item:enabled() then
+						ncUtils.Menu:set_item_value(k, v, self)
+					end
+				end
+			end,
+		},
+		{
+			text = managers.localization:text("dialog_cancel"),
+			is_cancel_button = true,
+			is_focused_button = true,
+		},
+	}
+	QuickMenu:new(menu_title, menu_message, menu_options):Show()
 end
 
-function OSA:get_menu_item(setting_id)
-	local menu = MenuHelper:GetMenu(self.meta.menu_id)
-	for _, item in pairs(menu._items) do
-		local name = item._parameters and item._parameters.name
-		if name == setting_id then
-			return item
+function OSA:remove_custom_weapon_blueprints()
+	local weapon_skins = tweak_data and tweak_data.blackmarket and tweak_data.blackmarket.weapon_skins
+	for k, v in pairs(weapon_skins or {}) do
+		if v.custom and v.default_blueprint then
+			v._osa_custom_default_blueprint = v.default_blueprint
+			v.default_blueprint = nil
 		end
 	end
 end
 
---Multiple choice options must be named as "<setting_id>_name" for this to work
-function OSA:get_choice_name(setting_id)
-	local value = self.settings[setting_id]
-	if not value then
-		return
+function OSA:restore_custom_weapon_blueprints()
+	local weapon_skins = tweak_data and tweak_data.blackmarket and tweak_data.blackmarket.weapon_skins
+	for k, v in pairs(weapon_skins or {}) do
+		if v.custom and v._osa_custom_default_blueprint then
+			v.default_blueprint = v._osa_custom_default_blueprint
+			v._osa_custom_default_blueprint = nil
+		end
 	end
-
-	local item = self:get_menu_item(setting_id)
-	local options = item._options or item._all_options
-	local text_id = options[value]._parameters.text_id
-	return string.sub(text_id, string.len(setting_id)+2)
 end
 
 function OSA:set_weapon_color_defaults(data)
 	if self.settings.osa_color_wear > 1 then
-		data.cosmetic_quality = self:get_choice_name("osa_color_wear")
+		data.cosmetic_quality = ncUtils.Menu:get_multi_choice_suffix("osa_color_wear", self)
 	end
 	if self.settings.osa_paint_scheme > 1 then
 		data.cosmetic_color_index = self.settings.osa_paint_scheme - 1
@@ -145,7 +205,7 @@ function OSA:failure_dialog(part_list)
 		if parts_tweak_data[part_id] and parts_tweak_data[part_id].name_id then
 			menu_message = menu_message .. "\n - " .. managers.localization:text(parts_tweak_data[part_id].name_id)
 		else
-			menu_message = menu_message .. "\n - " .. part_id
+			menu_message = menu_message .. "\n - part_id: " .. part_id
 		end
 	end
 	local menu_options = {{
@@ -163,13 +223,13 @@ function OSA:weapon_cosmetics_handler(params)
 	if not params.preview then
 		if params.add then
 			menu_message = managers.localization:text("dialog_weapon_cosmetics_add", {cosmetic = params.name})
+			if not params.locked then
+				menu_message = menu_message.."\n\n"..managers.localization:text("osa_dialog_choose_attachments")
+			else
+				menu_message = menu_message.."\n\n"..managers.localization:text("dialog_weapon_cosmetics_locked")
+			end
 		else
 			menu_message = managers.localization:text("dialog_weapon_cosmetics_remove", {cosmetic = params.name})
-		end
-
-		if params.locked then
-			menu_message = menu_message.."\n\n"..managers.localization:text("dialog_weapon_cosmetics_locked")
-		else
 			menu_message = menu_message.."\n\n"..managers.localization:text("osa_dialog_choose_attachments")
 		end
 	else
@@ -213,6 +273,40 @@ function OSA:weapon_cosmetics_handler(params)
 	QuickMenu:new(menu_title, menu_message, menu_options):Show()
 end
 
+--Simple menu
+function OSA:weapon_cosmetics_handler_simple(params)
+	local menu_title = managers.localization:text("osa_dialog_title")
+
+	local menu_message
+	if params.add then
+		menu_message = managers.localization:text("dialog_weapon_cosmetics_add", {cosmetic = params.name})
+		if not params.locked then
+			menu_message = menu_message.."\n\n"..managers.localization:text("osa_dialog_autokeep")
+		else
+			menu_message = menu_message.."\n\n"..managers.localization:text("dialog_weapon_cosmetics_locked")
+		end
+	else
+		menu_message = managers.localization:text("dialog_weapon_cosmetics_remove", {cosmetic = params.name})
+		menu_message = menu_message.."\n\n"..managers.localization:text("osa_dialog_autokeep")
+	end
+
+	local menu_options = {
+		{
+			text = managers.localization:text("dialog_apply"),
+			callback = function()
+				self._mode = not params.locked and "keep" or "replace"
+				params.yes_clbk()
+			end,
+			is_focused_button = true,
+		},
+		{
+			text = managers.localization:text("dialog_cancel"),
+			is_cancel_button = true,
+		}
+	}
+	QuickMenu:new(menu_title, menu_message, menu_options):Show()
+end
+
 function OSA:preview_wear_handler(params)
 	if not params.choose_wear then
 		self:preview_mods_handler(params)
@@ -225,7 +319,7 @@ function OSA:preview_wear_handler(params)
 	local menu_options = {}
 	for _, quality in ipairs({"mint", "fine", "good", "fair", "poor"}) do
 		table.insert(menu_options, {
-			text = managers.localization:text("bm_menu_quality_"..quality),
+			text = managers.localization:text("osa_color_wear_"..quality),
 			callback = function()
 				params.data.cosmetic_quality = quality
 				self:preview_mods_handler(params)

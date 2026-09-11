@@ -1,0 +1,216 @@
+{
+	"ak74_rodina": {
+		"name": "Vlad's Rodina",
+		"name_id": "bm_wskn_ak74_rodina",
+		"icon": "guis/dlcs/cash/safes/sputnik/weapon_skins/ak74_rodina",
+		"weapons": [
+			"ak74"
+		],
+		"parts": {
+			"wpn_fps_ass_74_b_legend": "barrel",
+			"wpn_upg_ak_fg_legend": "foregrip",
+			"wpn_upg_ak_g_legend": "grip",
+			"wpn_upg_ak_s_legend": "stock",
+			"wpn_upg_ak_fl_legend": "laser"
+		}
+	},
+	"deagle_bling": {
+		"name": "Midas Touch",
+		"name_id": "bm_wskn_deagle_bling",
+		"icon": "guis/dlcs/cash/safes/cf15/weapon_skins/deagle_bling",
+		"weapons": [
+			"deagle",
+			"x_deagle"
+		],
+		"parts": {
+			"wpn_fps_pis_deagle_b_legend": "barrel"
+		}
+	},
+	"flamethrower_mk2_fire": {
+		"name": "Dragon Lord",
+		"name_id": "bm_wskn_flamethrower_mk2_fire",
+		"icon": "guis/dlcs/cash/safes/cop/weapon_skins/flamethrower_mk2_fire",
+		"weapons": [
+			"flamethrower_mk2"
+		],
+		"parts": {
+			"wpn_fps_fla_mk2_body_fierybeast": "receiver"
+		}
+	},
+	"rpg7_boom": {
+		"name": "Green Grin",
+		"name_id": "bm_wskn_rpg7_boom",
+		"icon": "guis/dlcs/cash/safes/cop/weapon_skins/rpg7_boom",
+		"weapons": [
+			"rpg7"
+		],
+		"parts": {
+			"wpn_fps_rpg7_m_grinclown": "rocket"
+		}
+	},
+	"m134_bulletstorm": {
+		"name": "The Gimp",
+		"name_id": "bm_wskn_m134_bulletstorm",
+		"icon": "guis/dlcs/cash/safes/cop/weapon_skins/m134_bulletstorm",
+		"weapons": [
+			"m134"
+		],
+		"parts": {
+			"wpn_fps_lmg_m134_body_upper_spikey": "body_kit",
+			"wpn_fps_lmg_m134_barrel_legendary": "barrel"
+		}
+	},
+	"p90_dallas_sallad": {
+		"name": "Alamo Dallas",
+		"name_id": "bm_wskn_p90_dallas_sallad",
+		"icon": "guis/dlcs/cash/safes/dallas/weapon_skins/p90_dallas_sallad",
+		"weapons": [
+			"p90",
+			"x_p90"
+		],
+		"parts": {
+			"wpn_fps_smg_p90_b_legend": "body_kit"
+		}
+	},
+	"r870_waves": {
+		"name": "Big Kahuna",
+		"name_id": "bm_wskn_r870_waves",
+		"icon": "guis/dlcs/cash/safes/surf/weapon_skins/r870_waves",
+		"weapons": [
+			"r870"
+		],
+		"parts": {
+			"wpn_fps_shot_r870_b_legendary": "barrel",
+			"wpn_fps_shot_r870_s_legendary": "stock",
+			"wpn_fps_shot_r870_fg_legendary": "foregrip"
+		}
+	},
+	"x_1911_ginger": {
+		"name": "Santa's Slayers",
+		"name_id": "bm_wskn_x_1911_ginger",
+		"icon": "guis/dlcs/cash/safes/flake/weapon_skins/x_1911_ginger",
+		"weapons": [
+			"x_1911",
+			"colt_1911"
+		],
+		"parts": {
+			"wpn_fps_pis_1911_g_legendary": "grip",
+			"wpn_fps_pis_1911_fl_legendary": "laser"
+		}
+	},
+	"model70_baaah": {
+		"name": "Don Pastrami",
+		"name_id": "bm_wskn_model70_baaah",
+		"icon": "guis/dlcs/cash/safes/bah/weapon_skins/model70_baaah",
+		"weapons": [
+			"model70"
+		],
+		"parts": {
+			"wpn_fps_snp_model70_b_legend": "barrel",
+			"wpn_fps_snp_model70_s_legend": "stock"
+		}
+	},
+	"par_wolf": {
+		"name": "Hungry Wolf",
+		"name_id": "bm_wskn_par_wolf",
+		"icon": "guis/dlcs/cash/safes/pack/weapon_skins/par_wolf",
+		"weapons": [
+			"par"
+		],
+		"parts": {
+			"wpn_fps_lmg_svinet_b_standard": "barrel",
+			"wpn_fps_lmg_svinet_s_legend": "stock"
+		}
+	},
+	"m16_cola": {
+		"name": "Astatoz",
+		"name_id": "bm_wskn_m16_cola",
+		"icon": "guis/dlcs/cash/safes/cola/weapon_skins/m16_cola",
+		"weapons": [
+			"m16"
+		],
+		"parts": {
+			"wpn_fps_ass_m16_b_legend": "barrel",
+			"wpn_fps_ass_m16_fg_legend": "foregrip",
+			"wpn_fps_ass_m16_s_legend": "stock"
+		}
+	},
+	"judge_burn": {
+		"name": "Anarcho",
+		"name_id": "bm_wskn_judge_burn",
+		"icon": "guis/dlcs/cash/safes/burn/weapon_skins/judge_burn",
+		"weapons": [
+			"judge",
+			"x_judge"
+		],
+		"parts": {
+			"wpn_fps_pis_judge_b_legend": "barrel",
+			"wpn_fps_pis_judge_g_legend": "grip"
+		}
+	},
+	"boot_buck": {
+		"name": "Apex",
+		"name_id": "bm_wskn_boot_buck",
+		"icon": "guis/dlcs/cash/safes/buck/weapon_skins/boot_buck",
+		"weapons": [
+			"boot"
+		],
+		"parts": {
+			"wpn_fps_sho_boot_b_legendary": "barrel",
+			"wpn_fps_sho_boot_fg_legendary": "foregrip",
+			"wpn_fps_sho_boot_o_legendary": "sight_iron",
+			"wpn_fps_sho_boot_s_legendary": "stock"
+		}
+	},
+	"ksg_same": {
+		"name": "Admiral",
+		"name_id": "bm_wskn_ksg_same",
+		"icon": "guis/dlcs/cash/safes/same/weapon_skins/ksg_same",
+		"weapons": [
+			"ksg"
+		],
+		"parts": {
+			"wpn_fps_sho_ksg_b_legendary": "barrel"
+		}
+	},
+	"tecci_grunt": {
+		"name": "Mars Ultor",
+		"name_id": "bm_wskn_tecci_grunt",
+		"icon": "guis/dlcs/cash/safes/grunt/weapon_skins/tecci_grunt",
+		"weapons": [
+			"tecci"
+		],
+		"parts": {
+			"wpn_fps_ass_tecci_b_legend": "barrel",
+			"wpn_fps_ass_tecci_fg_legend": "foregrip",
+			"wpn_fps_ass_tecci_s_legend": "stock"
+		}
+	},
+	"serbu_lones": {
+		"name": "Demon",
+		"name_id": "bm_wskn_serbu_lones",
+		"icon": "guis/dlcs/cash/safes/lones/weapon_skins/serbu_lones",
+		"weapons": [
+			"serbu"
+		],
+		"parts": {
+			"wpn_fps_shot_shorty_b_legendary": "barrel",
+			"wpn_fps_shot_shorty_fg_legendary": "foregrip",
+			"wpn_fps_shot_shorty_s_legendary": "stock"
+		}
+	},
+	"new_m14_lones": {
+		"name": "Plush Phoenix",
+		"name_id": "bm_wskn_new_m14_lones",
+		"icon": "guis/dlcs/cash/safes/lones/weapon_skins/new_m14_lones",
+		"weapons": [
+			"new_m14"
+		],
+		"parts": {
+			"wpn_fps_ass_m14_b_legendary": "barrel",
+			"wpn_fps_ass_m14_body_legendary": "stock",
+			"wpn_fps_ass_m14_body_upper_legendary": "receiver_upper",
+			"wpn_fps_ass_m14_body_lower_legendary": "receiver_lower"
+		}
+	}
+}

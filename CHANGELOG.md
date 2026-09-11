@@ -1,5 +1,38 @@
 # Changelog
 
+## v5.0
+
+*2026-09-11 - Update 247.3*
+
+- Added preset settings for use with Super Duper Skin Swapper.
+	- New installations of OSA automatically use these settings when SDSS is detected.
+	- Added a button to the OSA options menu to manually apply the recommended SDSS settings. Only appears when SDSS is running.
+	- All settings can still be changed manually (except for legendary skin support which is required for SDSS).
+- New features:
+	- Option to replace the attachments dialog with a simple confirmation ("Keep Attachments by Default"). Disabled by default.
+	- Option to automatically switch between real and add-on legendary attachments depending on availability ("Autoswap Legendary Attachments"). Disabled by default. Requires the Add-On Legendary Attachments mod.
+	- Fix for Platypus Beak Supressor glitch when using the Don Pastrami Barrel (previously part of the Add-On Legendary Attachments mod). Only runs when BeardLib is installed.
+- Fixes:
+	- Performance improvements. When switching skins, the blueprint will only be rebuilt when attachments are missing.
+	- Added some crash guards when applying/removing skins. OSA now only tries to keep attachments on skin changes initiated by the user (i.e. when the game automatically removes skins, OSA will not do anything).
+	- Applying weapon skins or weapon mods resets preview.
+	- Santa's Slayers Laser blocks all sights except for the Marksman Sight.
+	- Fixes for compatibility with Multiple Weapon Mod Rows mod.
+	- Fixed an issue where attachments on custom weapon skins were not deleted when Custom Skins Safe Mode was enabled.
+	- Legendary skins can always be renamed.
+	- Restored the ability to use any barrel extension on the Demon Barrel (removed from the base game in U242.1).
+	- M308 now shows mini-icons for the upper body and lower body (renamed to upper receiver and lower receiver). Loaded via BeardLib installed, otherwise uses a Lua fix.
+	- Legendary weapon mod icons will be loaded via BeardLib if installed, otherwise keeps using the same Lua fix as before. The icon is not changed (still uses the skin icon).
+- Legendary localization changes:
+	- Alamo Dallas Barrel renamed to Body Kit.
+	- Plush Phoenix Upper Body renamed to Upper Receiver.
+	- Plush Phoenix Lower Body renamed to Lower Receiver.
+	- Reworked localization for suppressed legendary attachment mods.
+- Deprecated features:
+	- Buckshot switching removed.
+- Cleanup:
+	- Refactor to use shared utilities.
+
 ## v4.0.1
 
 *2026-02-04 - Update 242.2*

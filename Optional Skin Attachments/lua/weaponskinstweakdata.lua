@@ -3,9 +3,9 @@
 Hooks:PostHook(BlackMarketTweakData, "_init_weapon_skins", "OSA-PostHook-BlackMarketTweakData:_init_weapon_skins", function(self, tweak_data)
 	--Force legendary support if SDSS detected
 	--This is early enough that legendary features will be properly enabled
-	if _G.SDSS and not OSA.settings.osa_gen1_support then
-		OSA.settings.osa_gen1_support = true
-		OSA:save_settings()
+	if _G.SDSS and not OSA.settings.gen1_legend_support then
+		OSA.settings.gen1_legend_support = true
+		ncUtils.Settings:save(OSA)
 	end
 
 	--Remove empty blueprints from skins without attachments
@@ -16,19 +16,11 @@ Hooks:PostHook(BlackMarketTweakData, "_init_weapon_skins", "OSA-PostHook-BlackMa
 	end
 
 	--Remove unique name so that legendary skins can be renamed
+	--Unlock first generation legendary skins
 	for _, skin in pairs(self.weapon_skins) do
-		if not skin.locked then
-			--Rename gen2 legendary
-			skin.unique_name_id = nil
-		elseif OSA.settings.osa_gen1_support then
-			--Unlock gen1
-			skin.unique_name_id = nil
+		skin.unique_name_id = nil
+		if OSA.settings.gen1_legend_support then
 			skin.locked = nil
-		end
-
-		--Set "MODIFICATIONS INCLUDED" description for skins which have blueprints
-		if skin.rarity ~= "legendary" then
-			skin.desc_id = skin.default_blueprint and "osa_bm_has_attachments" or nil
 		end
 	end
 

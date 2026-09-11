@@ -1,0 +1,22 @@
+{
+	"osa_paint_scheme_1": "menu_weapon_color_index_1",
+	"osa_paint_scheme_2": "menu_weapon_color_index_2",
+	"osa_paint_scheme_3": "menu_weapon_color_index_3",
+	"osa_paint_scheme_4": "menu_weapon_color_index_4",
+	"osa_paint_scheme_5": "menu_weapon_color_index_5",
+	"osa_paint_scheme_6": "menu_weapon_color_index_6",
+	"osa_paint_scheme_7": "menu_weapon_color_index_7",
+	"osa_paint_scheme_8": "menu_weapon_color_index_8",
+	"osa_paint_scheme_9": "menu_weapon_color_index_9",
+	"osa_paint_scheme_10": "menu_weapon_color_index_10",
+	"osa_color_wear_poor": "bm_menu_quality_poor",
+	"osa_color_wear_fair": "bm_menu_quality_fair",
+	"osa_color_wear_good": "bm_menu_quality_good",
+	"osa_color_wear_fine": "bm_menu_quality_fine",
+	"osa_color_wear_mint": "bm_menu_quality_mint",
+	"osa_pattern_scale_small": "menu_pattern_scale_small",
+	"osa_pattern_scale_medium": "menu_pattern_scale_medium",
+	"osa_pattern_scale_large": "menu_pattern_scale_large",
+	"bm_menu_upper_body": "bm_menu_upper_reciever",
+	"bm_menu_lower_body": "bm_menu_lower_reciever"
+}

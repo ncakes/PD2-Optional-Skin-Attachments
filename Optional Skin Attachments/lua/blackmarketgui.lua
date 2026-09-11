@@ -1,20 +1,39 @@
---Add mod icons to legendary parts
-Hooks:PostHook(BlackMarketGui, "populate_mods", "OSA-PostHook-BlackMarketGui:populate_mods", function(self, data)
-	local weapon_id = data.prev_node_data and data.prev_node_data.name
-	local skin_id = weapon_id and OSA.data.weapon_to_skin[weapon_id]
-	if skin_id then
-		local parts_tweak_data = tweak_data.weapon.factory.parts
-		for _, part in ipairs(data) do
-			part_id = part.name
-			if part_id and parts_tweak_data[part_id] and parts_tweak_data[part_id].is_legendary_part then
-				part.bitmap_texture = OSA.data.skins[skin_id].icon
+--Add mod icons to legendary parts if not using BeardLib.
+if not _G.BeardLib then
+	Hooks:PostHook(BlackMarketGui, "populate_mods", "OSA-PostHook-BlackMarketGui:populate_mods", function(self, data)
+		local weapon_id = data.prev_node_data and data.prev_node_data.name
+		if not weapon_id then
+			return
+		end
+
+		local skin_id
+		for k, v in pairs(OSA.legend_data) do
+			if table.contains(v.weapons, weapon_id) then
+				skin_id = k
+				break
 			end
 		end
-	end
-end)
+
+		if skin_id then
+			local parts_tweak_data = tweak_data.weapon.factory.parts
+			for _, part in ipairs(data) do
+				local part_id = part.name
+				if part_id and parts_tweak_data[part_id] and parts_tweak_data[part_id].is_legendary_part then
+					part.bitmap_texture = OSA.legend_data[skin_id].icon
+				end
+			end
+		end
+	end)
+end
 
 --Hijack skin apply/remove
 function BlackMarketGui:_weapon_cosmetics_callback(data, add, yes_clbk)
+	local params = {
+		add = add,
+		name = data.name_localized,
+		yes_clbk = yes_clbk,
+	}
+
 	if add then
 		local skin_id = data.cosmetic_id
 		local skin_tweak = tweak_data.blackmarket.weapon_skins[skin_id]
@@ -23,19 +42,14 @@ function BlackMarketGui:_weapon_cosmetics_callback(data, add, yes_clbk)
 		local weapon_id = managers.blackmarket:get_crafted_category(data.category)[data.slot].weapon_id
 		local correct_weapon = (skin_tweak.weapon_id == weapon_id) or (skin_tweak.weapon_ids and table.contains(skin_tweak.weapon_ids, weapon_id))
 
-		OSA:weapon_cosmetics_handler({
-			add = add,
-			name = data.name_localized,
-			locked = data.locked_cosmetics,
-			can_use_blueprint = has_blueprint and correct_weapon,
-			yes_clbk = yes_clbk,
-		})
+		params.locked = data.locked_cosmetics
+		params.can_use_blueprint = has_blueprint and correct_weapon
+	end
+
+	if OSA.settings.always_keep then
+		OSA:weapon_cosmetics_handler_simple(params)
 	else
-		OSA:weapon_cosmetics_handler({
-			add = add,
-			name = data.name_localized,
-			yes_clbk = yes_clbk,
-		})
+		OSA:weapon_cosmetics_handler(params)
 	end
 end
 
@@ -63,14 +77,13 @@ function BlackMarketGui:preview_cosmetic_on_weapon_callback(data)
 		local correct_weapon = (skin_tweak.weapon_id == weapon_id) or (skin_tweak.weapon_ids and table.contains(skin_tweak.weapon_ids, weapon_id))
 
 		--First choose wear, then choose attachment
-		local preview_mode = OSA:get_choice_name("osa_preview_mode")
+		local preview_mode = ncUtils.Menu:get_multi_choice_suffix("osa_preview_mode", OSA)
 		if preview_mode ~= "auto" then
 			OSA:preview_wear_handler({
 				choose_wear = table.contains({"wear", "both"}, preview_mode),
 				choose_mods = table.contains({"mods", "both"}, preview_mode),
 				data = data,
 				can_use_blueprint = has_blueprint and correct_weapon,
-				yes_clbk = yes_clbk,
 			})
 			return
 		else
@@ -144,5 +157,22 @@ Hooks:PostHook(BlackMarketGui, "populate_weapon_cosmetics", "OSA-PostHook-BlackM
 	--Iterate over data table, update visible items with the sorted one (or nil for hidden ones)
 	for k, _ in ipairs(data) do
 		data[k] = sort_list[k]
+	end
+
+	--Compatibility with Multiple Weapon Mod Rows
+	--Need to pad with empties
+	local cols = data.override_slots[1]
+	local rows = data.override_slots[2]
+	local n_fully_fill = cols * math.max(math.ceil(#data / cols), rows)
+	for i = #data + 1, n_fully_fill do
+		local new_data = {
+			name = "empty",
+			name_localized = "",
+			category = data.category,
+			slot = i,
+			unlocked = true,
+			equipped = false
+		}
+		data[i] = new_data
 	end
 end)

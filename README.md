@@ -1,7 +1,5 @@
 # Optional Skin Attachments
 
-Optional Skin Attachments is now compatible with [Super Duper Skin Swapper](https://github.com/ncakes/PD2-Super-Duper-Skin-Swapper).
-
 ## Overview
 
 This mod allows you to choose which attachments to use when applying weapon skins and provides improved support for legendary skins. Main features:
@@ -14,11 +12,15 @@ This mod allows you to choose which attachments to use when applying weapon skin
 ## Additional Changes/Remarks
 
 - Fixes a bug in the base game where skins were not being sorted correctly.
-- Fixes a bug in the base game where weapons could not be renamed even after the legendary skin was removed.
+- Allows all legendary skins to be renamed.
 - Various fixes to prevent clipping/missing weapon parts when customizing legendary weapons.
-- Allows attachments to be previewed on first generation legendary skins.
-- Allows second generation legendary skins to be renamed.
 - Displays a visual indicator when players use swapped skins.
+
+## Compatibility
+
+Optional Skin Attachments is compatible with [Hide Duplicate Skins](https://github.com/ncakes/PD2-Hide-Duplicate-Skins).
+
+Optional Skin Attachments v4.0+ is compatible with [Super Duper Skin Swapper](https://github.com/ncakes/PD2-Super-Duper-Skin-Swapper) v3.0+.
 
 ## Installation
 

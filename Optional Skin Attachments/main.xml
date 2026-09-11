@@ -1,0 +1,47 @@
+<mod name="OSA Assets" author="github.com/ncakes" min_lib_version="3.38">
+	<AddFiles directory="assets">
+		<unit_mat_cc path="units/aola/weapons/wpn_fps_snp_model70_pts/wpn_fps_snp_model70_ns_suppressor_addon"/>
+		<texture path="guis/textures/pd2/blackmarket/inv_mod_upper_body"/>
+		<texture path="guis/textures/pd2/blackmarket/inv_mod_lower_body"/>
+		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_ass_74_b_legend"/>
+		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_upg_ak_fg_legend"/>
+		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_upg_ak_g_legend"/>
+		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_upg_ak_s_legend"/>
+		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_upg_ak_fl_legend"/>
+		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_pis_deagle_b_legend"/>
+		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_fla_mk2_body_fierybeast"/>
+		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_rpg7_m_grinclown"/>
+		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_lmg_m134_body_upper_spikey"/>
+		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_lmg_m134_barrel_legendary"/>
+		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_smg_p90_b_legend"/>
+		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_shot_r870_b_legendary"/>
+		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_shot_r870_s_legendary"/>
+		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_shot_r870_fg_legendary"/>
+		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_pis_1911_g_legendary"/>
+		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_pis_1911_fl_legendary"/>
+		<texture path="guis/dlcs/berry/textures/pd2/blackmarket/icons/mods/wpn_fps_snp_model70_b_legend"/>
+		<texture path="guis/dlcs/berry/textures/pd2/blackmarket/icons/mods/wpn_fps_snp_model70_s_legend"/>
+		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_lmg_svinet_b_standard"/>
+		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_lmg_svinet_s_legend"/>
+		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_ass_m16_b_legend"/>
+		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_ass_m16_fg_legend"/>
+		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_ass_m16_s_legend"/>
+		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_pis_judge_g_legend"/>
+		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_pis_judge_b_legend"/>
+		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_sho_boot_b_legendary"/>
+		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_sho_boot_fg_legendary"/>
+		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_sho_boot_o_legendary"/>
+		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_sho_boot_s_legendary"/>
+		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_sho_ksg_b_legendary"/>
+		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_ass_tecci_b_legend"/>
+		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_ass_tecci_fg_legend"/>
+		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_ass_tecci_s_legend"/>
+		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_shot_shorty_b_legendary"/>
+		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_shot_shorty_fg_legendary"/>
+		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_shot_shorty_s_legendary"/>
+		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_ass_m14_b_legendary"/>
+		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_ass_m14_body_legendary"/>
+		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_ass_m14_body_upper_legendary"/>
+		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_ass_m14_body_lower_legendary"/>
+	</AddFiles>
+</mod>

@@ -14,11 +14,12 @@ Hooks:PostHook(BlackMarketManager, "init_finalize", "OSA-PostHook-BlackMarketMan
 	self:osa_set_visible_parts()
 end)
 
+--Checks which skins are owned and set available legendary parts
 function BlackMarketManager:osa_set_visible_parts()
-	for skin_id, data in pairs(OSA.data.skins) do
+	for skin_id, data in pairs(OSA.legend_data) do
 		local has_skin = self:have_inventory_tradable_item("weapon_skins", skin_id)
-		local show = OSA.settings.osa_gen1_support and (has_skin or not OSA.settings.osa_hide_unowned)
-		for _, part_id in pairs(data.parts) do
+		local show = OSA.settings.gen1_legend_support and (has_skin or not OSA.settings.hide_unowned_legend)
+		for part_id, _ in pairs(data.parts) do
 			tweak_data.weapon.factory.parts[part_id].pcs = show and {} or nil
 			tweak_data.weapon.factory.parts[part_id].inaccessible = not show
 			tweak_data.blackmarket.weapon_mods[part_id].pcs = show and {} or nil
@@ -27,19 +28,73 @@ function BlackMarketManager:osa_set_visible_parts()
 	end
 end
 
---Includes special_blueprint. Returns {} if no skin_id or no blueprint.
+--Returns a copy that can be safely modified.
+local function get_vanilla_blueprint_fid(factory_id)
+	return deep_clone(managers.weapon_factory:get_default_blueprint_by_factory_id(factory_id))
+end
+
+local function get_vanilla_blueprint_wid(weapon_id)
+	local factory_id = managers.weapon_factory:get_factory_id_by_weapon_id(weapon_id)
+	return get_vanilla_blueprint_fid(factory_id)
+end
+
+--Returns a copy that includes special_blueprint if applicable.
+--Returns nil if no skin_id or no default_blueprint.
+--Adapted from WeaponFactoryManager:get_cosmetics_blueprint_by_weapon_id
+--special_blueprint was added in U242 when they enabled single/akimbo switching.
+--It's used for storing attachments which are only available on specific weapons.
 local function get_skin_blueprint(weapon_id, skin_id)
-	if skin_id and tweak_data.blackmarket.weapon_skins[skin_id] and tweak_data.blackmarket.weapon_skins[skin_id].default_blueprint then
-		return managers.weapon_factory:get_cosmetics_blueprint_by_weapon_id(weapon_id, skin_id)
-	else
-		return {}
+	local skin_data = skin_id and tweak_data.blackmarket.weapon_skins[skin_id]
+	if not skin_data or not skin_data.default_blueprint then
+		return
+	end
+
+	--return managers.weapon_factory:get_cosmetics_blueprint_by_weapon_id(weapon_id, skin_id)
+
+	--Hardcode, better compatibility and guaranteed to be a clone
+	local blueprint = deep_clone(skin_data.default_blueprint)
+	local special_blueprint = skin_data.special_blueprint and skin_data.special_blueprint[weapon_id] or {}
+	table.list_append(blueprint, special_blueprint)
+	return blueprint
+end
+
+local function get_part_global_value(part_id)
+	local part_data = tweak_data.weapon.factory.parts[part_id]
+
+	if not part_data then
+		--We tried
+		return
+	end
+
+	--Handle custom parts
+	if part_data.custom then
+		return part_data.global_value or "normal"
+	end
+
+	return part_data.dlc and managers.dlc:dlc_to_global_value(part_data.dlc) or "normal"
+end
+
+local function set_global_values(crafted)
+	local factory_id = crafted and crafted.factory_id
+	local vanilla_parts = factory_id and managers.weapon_factory:get_default_blueprint_by_factory_id(factory_id)
+	if not vanilla_parts then
+		return
+	end
+
+	crafted.global_values = {}
+	for _, part_id in pairs(crafted.blueprint) do
+		if not table.contains(vanilla_parts, part_id) then
+			crafted.global_values[part_id] = get_part_global_value(part_id)
+		end
 	end
 end
 
 --Based on BlackMarketGui:purchase_weapon_mod_callback
+--Only checks cost, make sure you are allowed to buy the mod before calling (not unlockable, dlc owned).
 function BlackMarketManager:osa_buy_mod(part_id)
 	if managers.custom_safehouse:unlocked() then
 		local weapon_mod_tweak = tweak_data.weapon.factory.parts[part_id]
+		--We should only need to buy base-game parts so this is fine
 		local global_value = weapon_mod_tweak.dlc and managers.dlc:dlc_to_global_value(weapon_mod_tweak.dlc) or "normal"
 		local prices = tweak_data.safehouse.prices
 		local cc_cost = weapon_mod_tweak.is_event_mod and prices.event_weapon_mod or prices.weapon_mod
@@ -54,75 +109,9 @@ function BlackMarketManager:osa_buy_mod(part_id)
 	return false
 end
 
---Sort available and unavailable. Cosmetics is new skin data from func, can be nil for remove.
-function BlackMarketManager:osa_check_keepable_attachments(category, slot, cosmetics)
-	local crafted = self._global.crafted_items[category][slot]
-	local weapon_id = crafted.weapon_id
-
-	local old_skin_blueprint = get_skin_blueprint(weapon_id, crafted.cosmetics and crafted.cosmetics.id)
-	local new_skin_blueprint = get_skin_blueprint(weapon_id, cosmetics and cosmetics.id)
-	local vanilla_blueprint = managers.weapon_factory:get_default_blueprint_by_factory_id(crafted.factory_id)
-	local current_blueprint = crafted.blueprint
-
-	--AOLA switch blueprints here?
-
-	local parts_tweak_data = tweak_data.weapon.factory.parts
-	local available = {}
-	local unavailable = {}
-	local shopping_list = {}
-	for _, part_id in pairs(current_blueprint) do
-		local dlc = parts_tweak_data[part_id].dlc or "normal"
-
-		if table.contains(vanilla_blueprint, part_id) then
-			--Nothing. Default part.
-		elseif table.contains(new_skin_blueprint, part_id) then
-			--OK. On new skin.
-			table.insert(available, part_id)
-		elseif parts_tweak_data[part_id].is_legendary_part then
-			--INVALID. Not on skin and legendary.
-			table.insert(unavailable, part_id)
-		elseif not table.contains(old_skin_blueprint, part_id) then
-			--OK. This is your own part.
-			table.insert(available, part_id)
-		elseif dlc ~= "normal" and not managers.dlc:is_dlc_unlocked(dlc) then
-			--INVALID. Not your part and missing DLC. Paid buckshot on {"m37_wwt", "m37_smosh"}
-			if part_id ~= "wpn_fps_upg_a_custom" then
-				table.insert(unavailable, part_id)
-			elseif self:has_inventory_item("normal", "weapon_mods", "wpn_fps_upg_a_custom_free") then
-				table.insert(available, "wpn_fps_upg_a_custom_free")
-			elseif OSA.settings.osa_autobuy then
-				table.insert(shopping_list, "wpn_fps_upg_a_custom_free")
-			else
-				table.insert(unavailable, part_id)
-			end
-		elseif self:has_inventory_item(dlc, "weapon_mods", part_id) then
-			--OK. In stock.
-			table.insert(available, part_id)
-		elseif parts_tweak_data[part_id].is_a_unlockable then
-			--INVALID. No stock + is_a_unlockable.
-			table.insert(unavailable, part_id)
-		elseif OSA.settings.osa_autobuy then
-			table.insert(shopping_list, part_id)
-		else
-			table.insert(unavailable, part_id)
-		end
-	end
-
-	--Try to buy with CC
-	for _, part_id in pairs(shopping_list) do
-		if self:osa_buy_mod(part_id) then
-			table.insert(available, part_id)
-		else
-			table.insert(unavailable, part_id)
-		end
-	end
-
-	return {available = available, unavailable = unavailable}
-end
-
---Apply a list of parts
+--Apply a list of parts.
 --Important: need to update skin before calling otherwise no_consume is wrong
-function BlackMarketManager:osa_apply_parts_list(category, slot, parts_list)
+function BlackMarketManager:osa_apply_parts_list(category, slot, parts_list, retry)
 	local crafted = self._global.crafted_items[category][slot]
 	local weapon_id = crafted.weapon_id
 	local skin_id = crafted.cosmetics and crafted.cosmetics.id or nil
@@ -133,7 +122,7 @@ function BlackMarketManager:osa_apply_parts_list(category, slot, parts_list)
 
 	for _, part_id in pairs(parts_list) do
 		if managers.weapon_factory:can_add_part(crafted.factory_id, part_id, crafted.blueprint) == nil then
-			local global_value = parts_tweak_data[part_id].dlc or "normal"
+			local global_value = get_part_global_value(part_id)
 			local free_of_charge = true
 			local no_consume = table.contains(skin_blueprint, part_id) or parts_tweak_data[part_id].is_a_unlockable or false
 			local loading = true--This skips OMW, otherwise game crashes
@@ -143,11 +132,199 @@ function BlackMarketManager:osa_apply_parts_list(category, slot, parts_list)
 		end
 	end
 
-	return failed
+	--Do a second pass in case there are dependencies
+	--e.g. maybe we tried to apply a Scope Mount before a scope.
+	if #failed > 0 and retry then
+		return self:osa_apply_parts_list(category, slot, failed, false)
+	else
+		return failed
+	end
+end
+
+--New function for keeping attachments and switching cosmetics.
+--Cosmetics can be nil, will remove.
+--Returns a list of parts that could not be kept.
+function BlackMarketManager:osa_keep_attachments(category, slot, cosmetics)
+	local crafted = self._global.crafted_items[category] and self._global.crafted_items[category][slot]
+	set_global_values(crafted)
+
+	local old_cosmetic_id = crafted.cosmetics and crafted.cosmetics.id
+	local new_cosmetic_id = cosmetics and cosmetics.id
+	--Same skin
+	if old_cosmetic_id == new_cosmetic_id then
+		crafted.cosmetics = cosmetics
+		return {}
+	end
+
+	local old_cosmetic_default_blueprint = old_cosmetic_id and get_skin_blueprint(crafted.weapon_id, old_cosmetic_id) or {}
+	local new_cosmetic_default_blueprint = new_cosmetic_id and get_skin_blueprint(crafted.weapon_id, new_cosmetic_id) or {}
+	--No attachments in either blueprint
+	if #old_cosmetic_default_blueprint == 0 and new_cosmetic_default_blueprint == 0 then
+		crafted.cosmetics = cosmetics
+		return {}
+	end
+
+	--Well this could be annoying
+	local parts_tweak_data = tweak_data.weapon.factory.parts
+	local vanilla_blueprint = get_vanilla_blueprint_fid(crafted.factory_id)
+
+	--Legendary autoswap. Modify current blueprint.
+	if _G.AOLA and OSA.settings.autoswap_legend then
+
+		--AOLA 2.0+ will tag all AOLA parts, the key is specified in AOLA.config.part_tag
+		local aola_tag = AOLA.config and AOLA.config.part_tag
+		local aola_suffix = AOLA.config and AOLA.config.part_suffix or "_addon"
+		--local aola_tbf = AOLA.config and AOLA.config.texture_bundle_folder or "aola"
+		--Returns nil if not an AOLA part, otherwise returns real part_id
+		local function get_real_legend_part(part_id)
+			local part_data = parts_tweak_data[part_id]
+			if not part_data then
+				return
+			end
+			--Only fall back to texture bundle folder if aola_tag not defined.
+			local is_addon_part = (aola_tag and part_data[aola_tag]) or (not aola_tag and part_data.texture_bundle_folder == "aola")
+			if is_addon_part then
+				return ncUtils.String:strip_suffix(part_id, aola_suffix)
+			end
+		end
+
+		if old_cosmetic_id and OSA.legend_data[old_cosmetic_id] then
+			--Old skin is legendary, new is not
+			if table.contains(OSA.legend_data[old_cosmetic_id].weapons, crafted.weapon_id) then
+				for i, part_id in ipairs(crafted.blueprint) do
+					local new_part_id = parts_tweak_data[part_id].is_legendary_part and part_id..aola_suffix
+					if new_part_id then
+						crafted.blueprint[i] = new_part_id
+						if crafted.custom_colors and crafted.custom_colors[part_id] then
+							crafted.custom_colors[new_part_id] = crafted.custom_colors[part_id]
+						end
+					end
+				end
+				set_global_values(crafted)
+			end
+		elseif new_cosmetic_id and OSA.legend_data[new_cosmetic_id] then
+			--New skin is legendary, old is not
+			if table.contains(OSA.legend_data[new_cosmetic_id].weapons, crafted.weapon_id) then
+				for i, part_id in ipairs(crafted.blueprint) do
+					local new_part_id = get_real_legend_part(part_id)
+					if new_part_id then
+						crafted.blueprint[i] = new_part_id
+						if crafted.custom_colors and crafted.custom_colors[part_id] then
+							crafted.custom_colors[new_part_id] = crafted.custom_colors[part_id]
+						end
+					end
+				end
+				set_global_values(crafted)
+			end
+		end
+	end
+
+	--Array containing parts which could not be kept.
+	local not_available = {}
+
+	--Array containing parts for rebuild, only used if there were unavailable parts.
+	local wanted_parts = {}
+	--Table, k=part_id, v=global_value
+	--If all parts are available, just manage inventory and continue.
+	local take_from_inventory = {}
+	local return_to_inventory = {}
+
+	--Sort parts and try to buy missing parts
+	for _, part_id in ipairs(crafted.blueprint) do
+		if not table.contains(vanilla_blueprint, part_id) then
+			local part_data = parts_tweak_data[part_id]
+			local global_value = get_part_global_value(part_id)
+
+			local in_old = table.contains(old_cosmetic_default_blueprint, part_id)
+			local in_new = table.contains(new_cosmetic_default_blueprint, part_id)
+
+			if in_old and not in_new then
+				--We need to use our own part
+				if self:has_inventory_item(global_value, "weapon_mods", part_id) then
+					--We have it
+					take_from_inventory[part_id] = global_value
+				else
+					--Check if we can buy it
+					local legendary = part_data.is_legendary_part or part_data.unatainable
+					local unlockable = part_data.is_a_unlockable
+					local missing_dlc = not part_data.custom and part_data.dlc and not managers.dlc:is_dlc_unlocked(part_data.dlc)
+					local can_buy = OSA.settings.autobuy_missing and not legendary and not unlockable and not missing_dlc
+					if can_buy and self:osa_buy_mod(part_id) then
+						take_from_inventory[part_id] = global_value
+					else
+						table.insert(not_available, part_id)
+					end
+				end
+			elseif in_new and not in_old then
+				--Use free
+				return_to_inventory[part_id] = global_value
+			else
+				--Either in both skins, keep using free part.
+				--Or in neither skin, keep using your own part.
+				--Inventory management not needed but need to track in case a rebuild is required.
+				table.insert(wanted_parts, part_id)
+			end
+		end
+	end
+
+	--Everything available, just update inventory
+	if #not_available == 0 then
+		for part_id, global_value in pairs(take_from_inventory) do
+			if not parts_tweak_data[part_id].is_a_unlockable then
+				self:remove_item(global_value, "weapon_mods", part_id)
+				self:alter_global_value_item(global_value, "weapon_mods", slot, part_id, INV_REMOVE)
+				self:alter_global_value_item(global_value, category, slot, part_id, CRAFT_ADD)
+			end
+		end
+		for part_id, global_value in pairs(return_to_inventory) do
+			if not parts_tweak_data[part_id].is_a_unlockable then
+				self:add_to_inventory(global_value, "weapon_mods", part_id, true)
+				self:alter_global_value_item(global_value, category, slot, part_id, CRAFT_REMOVE)
+			end
+		end
+		crafted.cosmetics = cosmetics
+		set_global_values(crafted)
+		return {}
+	end
+
+	--Some parts unavailable, start with default blueprint and do a two-pass apply.
+	--wanted_parts was initialized with parts in both or neither skin.
+	--Add parts which require inventory management (take_from_inventory/return_to_inventory).
+	--We let the base game scrap and rebuild the entire gun, so no manual inventory management is required.
+	for part_id, _ in pairs(take_from_inventory) do
+		table.insert(wanted_parts, part_id)
+	end
+	for part_id, _ in pairs(return_to_inventory) do
+		table.insert(wanted_parts, part_id)
+	end
+
+	--Return to inventory and reset blueprint.
+	--vanilla_blueprint is already a clone and we didn't modify it, just use directly.
+	self:add_crafted_weapon_blueprint_to_inventory(category, slot, old_cosmetic_default_blueprint)
+	crafted.blueprint = vanilla_blueprint
+	crafted.global_values = {}
+
+	--Set cosmetics before applying new parts list
+	crafted.cosmetics = cosmetics
+	local failed = self:osa_apply_parts_list(category, slot, wanted_parts, true)
+	table.list_append(not_available, failed)
+	set_global_values(crafted)
+	return not_available
 end
 
 --Note: removed skin does not use special blueprint in basegame.
-function BlackMarketManager:_set_weapon_cosmetics(category, slot, cosmetics, update_weapon_unit)
+local orig_BlackMarketManager__set_weapon_cosmetics = BlackMarketManager._set_weapon_cosmetics
+function BlackMarketManager:_set_weapon_cosmetics(...)
+	local mode = OSA._mode
+	if not mode then
+		--I'm not touching this
+		return orig_BlackMarketManager__set_weapon_cosmetics(self, ...)
+	end
+	OSA._mode = nil
+	return self:osa_set_weapon_cosmetics(mode, ...)
+end
+
+function BlackMarketManager:osa_set_weapon_cosmetics(mode, category, slot, cosmetics, update_weapon_unit)
 	local crafted = self._global.crafted_items[category] and self._global.crafted_items[category][slot]
 	if not crafted then
 		return
@@ -164,53 +341,40 @@ function BlackMarketManager:_set_weapon_cosmetics(category, slot, cosmetics, upd
 	--Bugfix: base game doesn't use special blueprint for old skin
 	local old_cosmetic_id = crafted.cosmetics and crafted.cosmetics.id
 	local old_cosmetic_data = old_cosmetic_id and tweak_data.blackmarket.weapon_skins[old_cosmetic_id]
-	local old_cosmetic_default_blueprint = get_skin_blueprint(crafted.weapon_id, old_cosmetic_id)
+	local old_cosmetic_default_blueprint = get_skin_blueprint(crafted.weapon_id, old_cosmetic_id) or {}
 
-	--Mode can be "keep", "replace", or "remove"
-	local mode = OSA._mode or "keep"
+	--Mode is either "keep", "replace", or "remove"
 	if mode == "replace" then
+		set_global_values(crafted)
 		self:add_crafted_weapon_blueprint_to_inventory(category, slot, old_cosmetic_default_blueprint)
-		crafted.global_values = {}
-		crafted.blueprint = get_skin_blueprint(crafted.weapon_id, cosmetics.id)
-		if OSA.settings.osa_swap_buckshot and not weapon_skin_data.locked and managers.dlc:is_dlc_unlocked("gage_pack_shotgun") then
-			--These are the only skins with free buckshot
-			if table.contains({"ksg_same", "saiga_buck", "judge_burn", "boot_buck", "rota_ait", "serbu_lones"}, cosmetics.id) then
-				for k, v in pairs(crafted.blueprint) do
-					if v == "wpn_fps_upg_a_custom_free" then
-						crafted.blueprint[k] = "wpn_fps_upg_a_custom"
-						break
-					end
-				end
-			end
-		end
+		crafted.blueprint = get_skin_blueprint(crafted.weapon_id, cosmetics.id) or get_vanilla_blueprint_fid(crafted.factory_id)
+		crafted.cosmetics = cosmetics
+		set_global_values(crafted)
 	elseif mode == "remove" then
+		set_global_values(crafted)
 		self:add_crafted_weapon_blueprint_to_inventory(category, slot, old_cosmetic_default_blueprint)
+		crafted.blueprint = get_vanilla_blueprint_fid(crafted.factory_id)
+		crafted.cosmetics = cosmetics
 		crafted.global_values = {}
-		crafted.blueprint = deep_clone(managers.weapon_factory:get_default_blueprint_by_factory_id(crafted.factory_id))
 	else
 		--Defaults to keep
-		local reconstruct = self:osa_check_keepable_attachments(category, slot, cosmetics)
-		self:add_crafted_weapon_blueprint_to_inventory(category, slot, old_cosmetic_default_blueprint)
-		crafted.global_values = {}
-		crafted.blueprint = deep_clone(managers.weapon_factory:get_default_blueprint_by_factory_id(crafted.factory_id))
-		--Have to set it here so no_consume works correctly
-		crafted.cosmetics = cosmetics
-		local retry = self:osa_apply_parts_list(category, slot, reconstruct.available)
-		local fail = self:osa_apply_parts_list(category, slot, retry)
-		table.list_append(fail, reconstruct.unavailable)
-		if OSA.settings.osa_show_failure and #fail > 0 and update_weapon_unit then
-			OSA:failure_dialog(fail)
+		local failed = self:osa_keep_attachments(category, slot, cosmetics)
+		if #failed > 0 and update_weapon_unit and OSA.settings.show_failure then
+			OSA:failure_dialog(failed)
 		end
 	end
-	OSA._mode = nil
 
-	--Name only locked if skin locked
+	--Never lock names now that we have partial legendary customization natively
 	crafted.customize_locked = weapon_skin_data.locked
-	crafted.locked_name = weapon_skin_data.locked
+	crafted.locked_name = nil
 
-	--Rest unchanged
-	crafted.cosmetics = cosmetics
-	if old_cosmetic_id then
+	--Clear preview blueprint
+	if update_weapon_unit then
+		self:clear_preview_blueprint()
+	end
+
+	--Rest unchanged except for old_cosmetic_data crashguard
+	if old_cosmetic_id and old_cosmetic_data then
 		local global_value = old_cosmetic_data.global_value or managers.dlc:dlc_to_global_value(old_cosmetic_data.dlc)
 		self:alter_global_value_item(global_value, category, slot, old_cosmetic_id, CRAFT_REMOVE)
 	end
@@ -231,8 +395,20 @@ function BlackMarketManager:_set_weapon_cosmetics(category, slot, cosmetics, upd
 	MenuCallbackHandler:_update_outfit_information()
 end
 
-function BlackMarketManager:on_remove_weapon_cosmetics(category, slot, skip_update)
-	local crafted = self._global.crafted_items[category][slot]
+local orig_BlackMarketManager_on_remove_weapon_cosmetics = BlackMarketManager.on_remove_weapon_cosmetics
+function BlackMarketManager:on_remove_weapon_cosmetics(...)
+	local mode = OSA._mode
+	if not mode then
+		--I'm not touching this
+		orig_BlackMarketManager_on_remove_weapon_cosmetics(self, ...)
+		return
+	end
+	OSA._mode = nil
+	return self:osa_on_remove_weapon_cosmetics(mode, ...)
+end
+
+function BlackMarketManager:osa_on_remove_weapon_cosmetics(mode, category, slot, skip_update)
+	local crafted = self._global.crafted_items[category] and self._global.crafted_items[category][slot]
 	if not crafted then
 		return
 	end
@@ -240,40 +416,37 @@ function BlackMarketManager:on_remove_weapon_cosmetics(category, slot, skip_upda
 	--Get old skin
 	local old_cosmetic_id = crafted.cosmetics and crafted.cosmetics.id
 	local old_cosmetic_data = old_cosmetic_id and tweak_data.blackmarket.weapon_skins[old_cosmetic_id]
-	local old_cosmetic_default_blueprint = get_skin_blueprint(crafted.weapon_id, old_cosmetic_id)
+	local old_cosmetic_default_blueprint = get_skin_blueprint(crafted.weapon_id, old_cosmetic_id) or {}
 
-	local mode = OSA._mode or "keep"
+	--Mode is either "keep" or "remove"
 	if mode == "remove" then
+		set_global_values(crafted)
 		self:add_crafted_weapon_blueprint_to_inventory(category, slot, old_cosmetic_default_blueprint)
+		crafted.blueprint = get_vanilla_blueprint_fid(crafted.factory_id)
+		crafted.cosmetics = nil
 		crafted.global_values = {}
-		crafted.blueprint = deep_clone(managers.weapon_factory:get_default_blueprint_by_factory_id(crafted.factory_id))
 	else
 		--Defaults to keep
-		local reconstruct = self:osa_check_keepable_attachments(category, slot, nil)
-		self:add_crafted_weapon_blueprint_to_inventory(category, slot, old_cosmetic_default_blueprint)
-		crafted.global_values = {}
-		crafted.blueprint = deep_clone(managers.weapon_factory:get_default_blueprint_by_factory_id(crafted.factory_id))
-		--Have to set it here so no_consume works correctly
-		crafted.cosmetics = nil
-		local retry = self:osa_apply_parts_list(category, slot, reconstruct.available)
-		local fail = self:osa_apply_parts_list(category, slot, retry)
-		table.list_append(fail, reconstruct.unavailable)
-		if OSA.settings.osa_show_failure and #fail > 0 and not skip_update then
-			OSA:failure_dialog(fail)
+		local failed = self:osa_keep_attachments(category, slot, nil)
+		if #failed > 0 and not skip_update and OSA.settings.show_failure then
+			OSA:failure_dialog(failed)
 		end
 	end
-	OSA._mode = nil
 
-	--Remove GVs
-	crafted.cosmetics = nil
-	if old_cosmetic_id then
+	--Bugfix: locked name is not reset when skin is removed in base game.
+	crafted.customize_locked = nil
+	crafted.locked_name = nil
+
+	--old_cosmetic_data crashguard
+	if old_cosmetic_id and old_cosmetic_data then
 		local global_value = old_cosmetic_data.global_value or managers.dlc:dlc_to_global_value(old_cosmetic_data.dlc)
 		self:alter_global_value_item(global_value, category, slot, old_cosmetic_id, CRAFT_REMOVE)
 	end
 
-	crafted.customize_locked = nil
-	--Bugfix: locked name is not reset when skin is removed in base game
-	crafted.locked_name = nil
+	--Clear preview blueprint
+	if not skip_update then
+		self:clear_preview_blueprint()
+	end
 
 	--Rest unchanged
 	self:_verfify_equipped_category(category)
@@ -298,32 +471,33 @@ function BlackMarketManager:is_previewing_legendary_skin()
 end
 
 function BlackMarketManager:view_weapon_with_cosmetics(category, slot, cosmetics, open_node_cb, spawn_workbench, custom_data)
+	--Previews are always manually initiated so this is fine
+	local mode = OSA._mode or "keep"
+	OSA._mode = nil
+
 	if not self._global.crafted_items[category] or not self._global.crafted_items[category][slot] then
 		return
 	end
 	local weapon = self._global.crafted_items[category][slot]
 	local weapon_id = weapon.weapon_id
 	local factory_id = weapon.factory_id
-	--Deepclone here already
-	local blueprint = self._preview_blueprint and self._preview_blueprint.blueprint or deep_clone(weapon.blueprint)
-	local weapon_skin_data = tweak_data.blackmarket.weapon_skins[cosmetics.id]
 
-	local mode = OSA._mode or "keep"
+	--Initialize preview blueprint if not already
+	self:get_preview_blueprint(category, slot)
+
 	if mode == "replace" then
-		blueprint = get_skin_blueprint(weapon_id, cosmetics.id)
+		self._preview_blueprint.blueprint = get_skin_blueprint(weapon_id, cosmetics.id) or get_vanilla_blueprint_fid(factory_id)
 	elseif mode == "remove" then
-		blueprint = deep_clone(managers.weapon_factory:get_default_blueprint_by_factory_id(factory_id))
+		self._preview_blueprint.blueprint = get_vanilla_blueprint_fid(factory_id)
 	else
-		--Nothing
+		--Nothing, initialize already uses current weapon blueprint.
+		--We clear the preview when changes are made to the real gun so it will be re-initialized.
 	end
 
 	--Don't set this so we can preview again
 	--self._last_viewed_cosmetic_id = cosmetics.id
 
-	self:get_preview_blueprint(category, slot)
-	--Don't deep copy again
-	self._preview_blueprint.blueprint = blueprint
-
+	local blueprint = self._preview_blueprint.blueprint
 	--Rest unchanged
 	self:set_preview_cosmetics(category, slot, cosmetics)
 	local texture_switches = self:get_weapon_texture_switches(category, slot, weapon)
@@ -346,14 +520,16 @@ function BlackMarketManager:view_weapon_with_cosmetics(category, slot, cosmetics
 end
 
 --This function doesn't check special blueprint in the base game so special blueprint parts are added to inventory.
---Tempfix: set special blueprint parts as unlockable so they don't get added
+--Tempfix: set special blueprint parts as unlockable so they don't get added.
+--Still broken as of U247.3
 Hooks:PreHook(BlackMarketManager, "modify_weapon", "OSA-PreHook-BlackMarketManager:modify_weapon", function(self, category, slot, ...)
 	local crafted = self._global.crafted_items[category] and self._global.crafted_items[category][slot]
 	if crafted and crafted.cosmetics then
 		local skin_data = tweak_data.blackmarket.weapon_skins[crafted.cosmetics.id]
 		local special_blueprint = skin_data and skin_data.special_blueprint and skin_data.special_blueprint[crafted.weapon_id]
 		if special_blueprint then
-			crafted.global_values = crafted.global_values or {}
+			--Reference so we can revert after
+			OSA._revert_special_blueprint = special_blueprint
 			--Important: this is the table that is checked
 			local parts_tweak = tweak_data.blackmarket.weapon_mods
 			for _, part_id in pairs(special_blueprint) do
@@ -363,20 +539,21 @@ Hooks:PreHook(BlackMarketManager, "modify_weapon", "OSA-PreHook-BlackMarketManag
 		end
 	end
 end)
-Hooks:PostHook(BlackMarketManager, "modify_weapon", "OSA-PostHook-BlackMarketManager:modify_weapon", function(self, category, slot, ...)
-	local crafted = self._global.crafted_items[category] and self._global.crafted_items[category][slot]
-	if crafted and crafted.cosmetics then
-		local skin_data = tweak_data.blackmarket.weapon_skins[crafted.cosmetics.id]
-		local special_blueprint = skin_data and skin_data.special_blueprint and skin_data.special_blueprint[crafted.weapon_id]
-		if special_blueprint then
-			crafted.global_values = crafted.global_values or {}
-			--Important: this is the table that is checked
-			local parts_tweak = tweak_data.blackmarket.weapon_mods
-			for _, part_id in pairs(special_blueprint) do
-				parts_tweak[part_id].is_a_unlockable = parts_tweak[part_id]._osa_sb_is_a_unlockable
-			end
+Hooks:PostHook(BlackMarketManager, "modify_weapon", "OSA-PostHook-BlackMarketManager:modify_weapon", function(self, category, slot, global_value, part_id, remove_part, loading)
+	--Clear preview blueprint
+	if not loading then
+		self:clear_preview_blueprint()
+	end
+
+	--Revert tempfix
+	if OSA._revert_special_blueprint then
+		local parts_tweak = tweak_data.blackmarket.weapon_mods
+		for _, part_id in pairs(OSA._revert_special_blueprint) do
+			parts_tweak[part_id].is_a_unlockable = parts_tweak[part_id]._osa_sb_is_a_unlockable
+			parts_tweak[part_id]._osa_sb_is_a_unlockable = nil
 		end
 	end
+	OSA._revert_special_blueprint = nil
 end)
 
 if _G.SDSS then
