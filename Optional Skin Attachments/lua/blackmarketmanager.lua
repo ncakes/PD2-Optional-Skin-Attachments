@@ -1,3 +1,7 @@
+_G[ModPath] = _G[ModPath] or {}
+if _G[ModPath][RequiredScript] then return end
+_G[ModPath][RequiredScript] = true
+
 --Refresh parts after Steam inventory update.
 Hooks:PostHook(BlackMarketManager, "tradable_update", "OSA-PostHook-BlackMarketManager:tradable_update", function(self, ...)
 	self:osa_set_visible_parts()
@@ -143,7 +147,10 @@ end
 
 --New function for keeping attachments and switching cosmetics.
 --Cosmetics can be nil, will remove.
---Returns a list of parts that could not be kept.
+--Returns a list of parts that could not be kept and whether the blueprint was modified.
+--Parts list can be empty but blueprint can still be modified if autoswapping.
+--FBMR compatibility: OSA needs to replace the blueprint table if any attachments were changed.
+--If the table is not replaced, FBMR assumes that the blueprint is the same (vanilla game behavior).
 function BlackMarketManager:osa_keep_attachments(category, slot, cosmetics)
 	local crafted = self._global.crafted_items[category] and self._global.crafted_items[category][slot]
 	set_global_values(crafted)
@@ -170,11 +177,11 @@ function BlackMarketManager:osa_keep_attachments(category, slot, cosmetics)
 
 	--Legendary autoswap. Modify current blueprint.
 	if _G.AOLA and OSA.settings.autoswap_legend then
-
+		--FBMR compatibility
+		local blueprint_changed = false
 		--AOLA 2.0+ will tag all AOLA parts, the key is specified in AOLA.config.part_tag
 		local aola_tag = AOLA.config and AOLA.config.part_tag
 		local aola_suffix = AOLA.config and AOLA.config.part_suffix or "_addon"
-		--local aola_tbf = AOLA.config and AOLA.config.texture_bundle_folder or "aola"
 		--Returns nil if not an AOLA part, otherwise returns real part_id
 		local function get_real_legend_part(part_id)
 			local part_data = parts_tweak_data[part_id]
@@ -195,6 +202,7 @@ function BlackMarketManager:osa_keep_attachments(category, slot, cosmetics)
 					local new_part_id = parts_tweak_data[part_id].is_legendary_part and part_id..aola_suffix
 					if new_part_id then
 						crafted.blueprint[i] = new_part_id
+						blueprint_changed = true
 						if crafted.custom_colors and crafted.custom_colors[part_id] then
 							crafted.custom_colors[new_part_id] = crafted.custom_colors[part_id]
 						end
@@ -209,6 +217,7 @@ function BlackMarketManager:osa_keep_attachments(category, slot, cosmetics)
 					local new_part_id = get_real_legend_part(part_id)
 					if new_part_id then
 						crafted.blueprint[i] = new_part_id
+						blueprint_changed = true
 						if crafted.custom_colors and crafted.custom_colors[part_id] then
 							crafted.custom_colors[new_part_id] = crafted.custom_colors[part_id]
 						end
@@ -216,6 +225,10 @@ function BlackMarketManager:osa_keep_attachments(category, slot, cosmetics)
 				end
 				set_global_values(crafted)
 			end
+		end
+		--FBMR compatibility. Replace the crafted.blueprint table so FBMR knows attachments were changed.
+		if blueprint_changed then
+			crafted.blueprint = deep_clone(crafted.blueprint)
 		end
 	end
 
@@ -344,6 +357,8 @@ function BlackMarketManager:osa_set_weapon_cosmetics(mode, category, slot, cosme
 	local old_cosmetic_default_blueprint = get_skin_blueprint(crafted.weapon_id, old_cosmetic_id) or {}
 
 	--Mode is either "keep", "replace", or "remove"
+	--FBMR compatibility: OSA needs to replace the blueprint table if any attachments were changed.
+	--If the table is not replaced, FBMR assumes that the blueprint is the same (vanilla game behavior).
 	if mode == "replace" then
 		set_global_values(crafted)
 		self:add_crafted_weapon_blueprint_to_inventory(category, slot, old_cosmetic_default_blueprint)
@@ -368,8 +383,7 @@ function BlackMarketManager:osa_set_weapon_cosmetics(mode, category, slot, cosme
 	crafted.customize_locked = weapon_skin_data.locked
 	crafted.locked_name = nil
 
-	--Clear preview blueprint
-	if update_weapon_unit then
+	if update_weapon_unit and OSA.settings.auto_clear_preview then
 		self:clear_preview_blueprint()
 	end
 
@@ -443,8 +457,7 @@ function BlackMarketManager:osa_on_remove_weapon_cosmetics(mode, category, slot,
 		self:alter_global_value_item(global_value, category, slot, old_cosmetic_id, CRAFT_REMOVE)
 	end
 
-	--Clear preview blueprint
-	if not skip_update then
+	if not skip_update and OSA.settings.auto_clear_preview then
 		self:clear_preview_blueprint()
 	end
 
@@ -463,11 +476,6 @@ function BlackMarketManager:osa_on_remove_weapon_cosmetics(mode, category, slot,
 		end
 		MenuCallbackHandler:_update_outfit_information()
 	end
-end
-
---Always allow mods to be previewed on legendary skins
-function BlackMarketManager:is_previewing_legendary_skin()
-	return false
 end
 
 function BlackMarketManager:view_weapon_with_cosmetics(category, slot, cosmetics, open_node_cb, spawn_workbench, custom_data)
@@ -495,6 +503,7 @@ function BlackMarketManager:view_weapon_with_cosmetics(category, slot, cosmetics
 	end
 
 	--Don't set this so we can preview again
+	--Note: this makes BlackMarketManager:is_previewing_legendary_skin always return false.
 	--self._last_viewed_cosmetic_id = cosmetics.id
 
 	local blueprint = self._preview_blueprint.blueprint
@@ -521,7 +530,7 @@ end
 
 --This function doesn't check special blueprint in the base game so special blueprint parts are added to inventory.
 --Tempfix: set special blueprint parts as unlockable so they don't get added.
---Still broken as of U247.3
+--Still broken as of U248
 Hooks:PreHook(BlackMarketManager, "modify_weapon", "OSA-PreHook-BlackMarketManager:modify_weapon", function(self, category, slot, ...)
 	local crafted = self._global.crafted_items[category] and self._global.crafted_items[category][slot]
 	if crafted and crafted.cosmetics then
@@ -541,7 +550,7 @@ Hooks:PreHook(BlackMarketManager, "modify_weapon", "OSA-PreHook-BlackMarketManag
 end)
 Hooks:PostHook(BlackMarketManager, "modify_weapon", "OSA-PostHook-BlackMarketManager:modify_weapon", function(self, category, slot, global_value, part_id, remove_part, loading)
 	--Clear preview blueprint
-	if not loading then
+	if not loading and OSA.settings.auto_clear_preview then
 		self:clear_preview_blueprint()
 	end
 
@@ -565,28 +574,13 @@ local orig_BlackMarketManager_get_weapon_icon_path = BlackMarketManager.get_weap
 function BlackMarketManager:get_weapon_icon_path(weapon_id, cosmetics)
 	local skin_id = cosmetics and cosmetics.id
 	local skin_data = skin_id and tweak_data.blackmarket.weapon_skins[skin_id]
+
 	if skin_data and not skin_data.is_a_color_skin and not self:weapon_cosmetics_type_check(weapon_id, skin_id) then
 		local rarity = skin_data.rarity or "common"
 		local rarity_path = tweak_data.economy.rarities[rarity] and tweak_data.economy.rarities[rarity].bg_texture
 		local texture_path, _ = orig_BlackMarketManager_get_weapon_icon_path(self, weapon_id, nil)
 		return texture_path, rarity_path
 	end
-	-- U242+ uses suffix "<skin>_<weapon_id>" when the cosmetic isn't the skin's base weapon.
-	-- The path has also moved from dlcs/<bundle_folder> to dlcs/cash/safes/<bundle_folder>
-	-- Leaving this for custom weapon skins that are using the old path.
-	local texture_path, rarity_path = orig_BlackMarketManager_get_weapon_icon_path(self, weapon_id, cosmetics)
-	if texture_path and not DB:has(Idstring("texture"), Idstring(texture_path)) then
-		if skin_data and not skin_data.is_a_color_skin then
-			local guis_catalog = "guis/"
-			local bundle_folder = skin_data.texture_bundle_folder
-			if bundle_folder then
-				guis_catalog = guis_catalog .. "dlcs/" .. tostring(bundle_folder) .. "/"
-			end
-			local fallback_path = guis_catalog .. "weapon_skins/" .. tostring(skin_id)
-			if DB:has(Idstring("texture"), Idstring(fallback_path)) then
-				texture_path = fallback_path
-			end
-		end
-	end
-	return texture_path, rarity_path
+
+	return orig_BlackMarketManager_get_weapon_icon_path(self, weapon_id, cosmetics)
 end

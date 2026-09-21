@@ -1,5 +1,16 @@
 # Changelog
 
+## v5.0.1
+
+*2026-09-21 - Update 248.1*
+
+- Added an option to automatically clear weapon previews when a weapon is modified (previously a built-in feature but now can be disabled).
+- Preview settings removed from SDSS preset.
+- Compatibility fixes for Fast Black Market Reload mod.
+- Cleanup:
+	- Removed tempfix for custom BeardLib skins that use the old weapon icon path.
+	- Simplified skin sorting code.
+
 ## v5.0
 
 *2026-09-11 - Update 247.3*

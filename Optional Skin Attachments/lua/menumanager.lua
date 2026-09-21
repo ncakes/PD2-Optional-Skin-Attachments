@@ -1,3 +1,7 @@
+_G[ModPath] = _G[ModPath] or {}
+if _G[ModPath][RequiredScript] then return end
+_G[ModPath][RequiredScript] = true
+
 Hooks:PostHook(MenuManager, "init", "OSA-PostHook-MenuManager:init", function(...)
 	--Prevent disabling legendary support if using SDSS
 	if _G.SDSS then

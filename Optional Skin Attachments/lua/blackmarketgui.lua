@@ -1,3 +1,7 @@
+_G[ModPath] = _G[ModPath] or {}
+if _G[ModPath][RequiredScript] then return end
+_G[ModPath][RequiredScript] = true
+
 --Add mod icons to legendary parts if not using BeardLib.
 if not _G.BeardLib then
 	Hooks:PostHook(BlackMarketGui, "populate_mods", "OSA-PostHook-BlackMarketGui:populate_mods", function(self, data)
@@ -99,80 +103,64 @@ if _G.SDSS then
 	return
 end
 
---Fixed default sorting, from SDSS
+--Fixed default sorting, adapted from SDSS
 Hooks:PostHook(BlackMarketGui, "populate_weapon_cosmetics", "OSA-PostHook-BlackMarketGui:populate_weapon_cosmetics", function(self, data, ...)
-	local crafted = managers.blackmarket:get_crafted_category(data.category)[data.prev_node_data and data.prev_node_data.slot]
-	local weapon_id = crafted.weapon_id
-
-	--Get non-empty cells
-	local sort_list = {}
-	for _, v in ipairs(data) do
-		if v.name ~= "empty" then
-			table.insert(sort_list, v)
-		end
+	if #data < 1 then
+		return
 	end
 
-	--Apply a sort
-	local td = tweak_data.blackmarket.weapon_skins
-	local rtd = tweak_data.economy.rarities
-	local etd = tweak_data.economy.qualities
-	for _, v in ipairs(sort_list) do
-		local skin_data = td[v.cosmetic_id]
-		v.sort_keys = {
-			color = v.is_a_color_skin and 0 or 1,
-			unlocked = v.unlocked and 0 or 1,
-			--rarity = 0,
-			name = managers.localization:text(skin_data.name_id),
-			skin_id = v.cosmetic_id,
-			--Should only matter if not using HideDupeSkins
-			wear = -etd[v.cosmetic_quality or "mint"].index,
-			bonus = v.cosmetic_bonus and 0 or 1,
+	local rarity_indexes = {
+		common = 1,
+		uncommon = 2,
+		rare = 3,
+		epic = 4,
+		legendary = 5,
+	}
+
+	local quality_indexes = {
+		poor = 1,
+		fair = 2,
+		good = 3,
+		fine = 4,
+		mint = 5,
+	}
+
+	for _, v in ipairs(data) do
+		local is_empty = (v.name == "empty")
+		local rarity_index = rarity_indexes[v.cosmetic_rarity or "common"]
+		local quality_index = quality_indexes[v.cosmetic_quality or "mint"]
+		local bonus_index = v.cosmetic_bonus and 1 or 0
+
+		local sort_keys = {
+			empty = is_empty and 1 or 0,--Empty always last.
+			color = v.is_a_color_skin and 0 or 1,--Color always first.
+			unlocked = v.unlocked and 0 or 1,--Unlocked before locked.
+			rarity = v.unlocked and rarity_index or -rarity_index,--lowhigh for unlocked, highlow for locked
+			name = v.name_localized or "",
+			skin_id = v.cosmetic_id or "",
+			quality = -quality_index,
+			bonus = -bonus_index,
 		}
-		--Unlocked skins sort low-high rarity, locked skins high-low
-		if v.unlocked then
-			v.sort_keys.rarity = rtd[skin_data.rarity or "common"].index
-		elseif not v.unlocked then
-			v.sort_keys.rarity = -rtd[skin_data.rarity or "common"].index
-		end
+
+		v.sort_keys = sort_keys
 	end
 
 	local sort_order = {
-		"color", "unlocked", "rarity",
-		"name", "skin_id",
-		"wear", "bonus"
+		"empty", "color", "unlocked",
+		"rarity", "name", "skin_id",
+		"quality", "bonus"
 	}
-	local x_keys, y_keys = nil
+
 	local function sort_func(x, y)
-		x_keys = x.sort_keys
-		y_keys = y.sort_keys
+		local x_keys = x.sort_keys
+		local y_keys = y.sort_keys
 		for _, k in ipairs(sort_order) do
 			if x_keys[k] ~= y_keys[k] then
 				return x_keys[k] < y_keys[k]
 			end
 		end
-		return x.cosmetic_id < y.cosmetic_id
-	end
-	table.sort(sort_list, sort_func)
-
-	--Iterate over data table, update visible items with the sorted one (or nil for hidden ones)
-	for k, _ in ipairs(data) do
-		data[k] = sort_list[k]
+		return x.name < y.name
 	end
 
-	--Compatibility with Multiple Weapon Mod Rows
-	--Need to pad with empties
-	local cols = data.override_slots[1]
-	local rows = data.override_slots[2]
-	local n_fully_fill = cols * math.max(math.ceil(#data / cols), rows)
-	for i = #data + 1, n_fully_fill do
-		local new_data = {
-			name = "empty",
-			name_localized = "",
-			category = data.category,
-			slot = i,
-			unlocked = true,
-			equipped = false
-		}
-		data[i] = new_data
-	end
+	table.sort(data, sort_func)
 end)

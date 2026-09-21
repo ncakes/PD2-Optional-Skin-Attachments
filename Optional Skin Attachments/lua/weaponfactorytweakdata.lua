@@ -1,3 +1,7 @@
+_G[ModPath] = _G[ModPath] or {}
+if _G[ModPath][RequiredScript] then return end
+_G[ModPath][RequiredScript] = true
+
 --Set up legendary parts
 Hooks:PostHook(WeaponFactoryTweakData, "_init_legendary", "OSA-PostHook-WeaponFactoryTweakData:_init_legendary", function(self)
 	--Fix Astatoz legendary foregrip type

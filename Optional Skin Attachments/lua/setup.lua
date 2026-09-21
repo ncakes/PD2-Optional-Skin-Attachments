@@ -23,6 +23,7 @@ OSA.settings = {
 	remove_beardlib_blueprints = true,
 
 	osa_preview_mode = 1,
+	auto_clear_preview = true,
 
 	osa_paint_scheme = 1,
 	osa_color_wear = 1,
@@ -52,8 +53,6 @@ OSA.sdss_preset = {
 	autobuy_missing = true,
 	show_failure = true,
 	remove_beardlib_blueprints = true,
-
-	osa_preview_mode = 1,
 }
 
 OSA.legend_data = ncUtils.FileIO:load_json(OSA.meta.mod_path.."data/legend_data.json")

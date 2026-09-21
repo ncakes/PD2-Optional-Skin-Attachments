@@ -1,3 +1,7 @@
+_G[ModPath] = _G[ModPath] or {}
+if _G[ModPath][RequiredScript] then return end
+_G[ModPath][RequiredScript] = true
+
 --Warning: removing default_blueprint can trigger false-positives in the anti-piracy code if not done properly.
 --Should also check special_blueprint after U242.
 Hooks:PostHook(BlackMarketTweakData, "_init_weapon_skins", "OSA-PostHook-BlackMarketTweakData:_init_weapon_skins", function(self, tweak_data)

@@ -84,6 +84,14 @@
 			"value": "osa_preview_mode"
 		},
 		{
+			"type": "toggle",
+			"id": "auto_clear_preview",
+			"title": "osa_auto_clear_preview_title",
+			"description": "osa_auto_clear_preview_desc",
+			"callback": "osa_callback_toggle",
+			"value": "auto_clear_preview"
+		},
+		{
 			"type": "divider",
 			"size": 16
 		},
