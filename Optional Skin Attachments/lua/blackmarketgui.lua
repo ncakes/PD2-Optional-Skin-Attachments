@@ -104,7 +104,7 @@ if _G.SDSS then
 end
 
 --Fixed default sorting, adapted from SDSS
-Hooks:PostHook(BlackMarketGui, "populate_weapon_cosmetics", "OSA-PostHook-BlackMarketGui:populate_weapon_cosmetics", function(self, data, ...)
+local function post_populate_weapon_cosmetics(data)
 	if #data < 1 then
 		return
 	end
@@ -163,4 +163,17 @@ Hooks:PostHook(BlackMarketGui, "populate_weapon_cosmetics", "OSA-PostHook-BlackM
 	end
 
 	table.sort(data, sort_func)
+end
+
+Hooks:PreHook(BlackMarketGuiTabItem, "init", "OSA-PreHook-BlackMarketGuiTabItem:init", function(self, main_panel, data, ...)
+	if data.name ~= "weapon_cosmetics" then
+		return
+	end
+
+	--Should fix compatibility with mods that fully overwrite BMG:populate_weapon_cosmetics.
+	local populate_func = data.on_create_func
+	data.on_create_func = function(data, ...)
+		populate_func(data, ...)
+		post_populate_weapon_cosmetics(data)
+	end
 end)

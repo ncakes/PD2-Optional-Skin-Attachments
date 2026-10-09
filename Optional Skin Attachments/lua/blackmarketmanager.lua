@@ -166,7 +166,7 @@ function BlackMarketManager:osa_keep_attachments(category, slot, cosmetics)
 	local old_cosmetic_default_blueprint = old_cosmetic_id and get_skin_blueprint(crafted.weapon_id, old_cosmetic_id) or {}
 	local new_cosmetic_default_blueprint = new_cosmetic_id and get_skin_blueprint(crafted.weapon_id, new_cosmetic_id) or {}
 	--No attachments in either blueprint
-	if #old_cosmetic_default_blueprint == 0 and new_cosmetic_default_blueprint == 0 then
+	if #old_cosmetic_default_blueprint == 0 and #new_cosmetic_default_blueprint == 0 then
 		crafted.cosmetics = cosmetics
 		return {}
 	end
@@ -188,44 +188,56 @@ function BlackMarketManager:osa_keep_attachments(category, slot, cosmetics)
 			if not part_data then
 				return
 			end
+			local is_addon_part = aola_tag and part_data[aola_tag]
 			--Only fall back to texture bundle folder if aola_tag not defined.
-			local is_addon_part = (aola_tag and part_data[aola_tag]) or (not aola_tag and part_data.texture_bundle_folder == "aola")
+			--Also make sure the suffix matches.
+			if not aola_tag then
+				is_addon_part = (part_data.texture_bundle_folder == "aola") and ncUtils.String:tail_match(part_id, aola_suffix)
+			end
 			if is_addon_part then
 				return ncUtils.String:strip_suffix(part_id, aola_suffix)
 			end
 		end
 
-		if old_cosmetic_id and OSA.legend_data[old_cosmetic_id] then
-			--Old skin is legendary, new is not
-			if table.contains(OSA.legend_data[old_cosmetic_id].weapons, crafted.weapon_id) then
-				for i, part_id in ipairs(crafted.blueprint) do
-					local new_part_id = parts_tweak_data[part_id].is_legendary_part and part_id..aola_suffix
-					if new_part_id then
-						crafted.blueprint[i] = new_part_id
-						blueprint_changed = true
-						if crafted.custom_colors and crafted.custom_colors[part_id] then
-							crafted.custom_colors[new_part_id] = crafted.custom_colors[part_id]
-						end
+		--Removing a legendary skin.
+		local old_legend_data = old_cosmetic_id and OSA.legend_data[old_cosmetic_id]
+
+		--Adding a legendary skin.
+		local new_legend_data = new_cosmetic_id and OSA.legend_data[new_cosmetic_id]
+
+		--Legendary part must be part of the old skin because there's no other way to use it.
+		if old_legend_data and table.contains(old_legend_data.weapons, crafted.weapon_id) then
+			for i, part_id in ipairs(crafted.blueprint) do
+				local new_part_id = parts_tweak_data[part_id].is_legendary_part and part_id..aola_suffix
+				if new_part_id and parts_tweak_data[new_part_id] then
+					crafted.blueprint[i] = new_part_id
+					blueprint_changed = true
+					if crafted.custom_colors and crafted.custom_colors[part_id] then
+						crafted.custom_colors[new_part_id] = crafted.custom_colors[part_id]
 					end
 				end
-				set_global_values(crafted)
 			end
-		elseif new_cosmetic_id and OSA.legend_data[new_cosmetic_id] then
-			--New skin is legendary, old is not
-			if table.contains(OSA.legend_data[new_cosmetic_id].weapons, crafted.weapon_id) then
-				for i, part_id in ipairs(crafted.blueprint) do
-					local new_part_id = get_real_legend_part(part_id)
-					if new_part_id then
-						crafted.blueprint[i] = new_part_id
-						blueprint_changed = true
-						if crafted.custom_colors and crafted.custom_colors[part_id] then
-							crafted.custom_colors[new_part_id] = crafted.custom_colors[part_id]
-						end
-					end
-				end
-				set_global_values(crafted)
-			end
+			set_global_values(crafted)
 		end
+
+		--In the future, if a weapon has more than one legendary skin with parts, we need to make sure the real part is included in the new legendary skin.
+		--Currently not possible.
+		if new_legend_data and table.contains(new_legend_data.weapons, crafted.weapon_id) then
+			for i, part_id in ipairs(crafted.blueprint) do
+				--Note: AOLA 2.1 adds extra legendary parts to Locomotive / Reinfeld.
+				--These are tagged with part_data[aola_tag]=false and do not use the "_addon" suffix. Therefore they will not be detected by get_real_legend_part.
+				local new_part_id = get_real_legend_part(part_id)
+				if new_part_id and parts_tweak_data[new_part_id] then
+					crafted.blueprint[i] = new_part_id
+					blueprint_changed = true
+					if crafted.custom_colors and crafted.custom_colors[part_id] then
+						crafted.custom_colors[new_part_id] = crafted.custom_colors[part_id]
+					end
+				end
+			end
+			set_global_values(crafted)
+		end
+
 		--FBMR compatibility. Replace the crafted.blueprint table so FBMR knows attachments were changed.
 		if blueprint_changed then
 			crafted.blueprint = deep_clone(crafted.blueprint)

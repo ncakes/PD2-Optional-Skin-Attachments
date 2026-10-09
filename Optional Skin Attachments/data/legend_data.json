@@ -9,9 +9,9 @@
 		"parts": {
 			"wpn_fps_ass_74_b_legend": "barrel",
 			"wpn_upg_ak_fg_legend": "foregrip",
+			"wpn_upg_ak_fl_legend": "laser",
 			"wpn_upg_ak_g_legend": "grip",
-			"wpn_upg_ak_s_legend": "stock",
-			"wpn_upg_ak_fl_legend": "laser"
+			"wpn_upg_ak_s_legend": "stock"
 		}
 	},
 	"deagle_bling": {
@@ -56,8 +56,8 @@
 			"m134"
 		],
 		"parts": {
-			"wpn_fps_lmg_m134_body_upper_spikey": "body_kit",
-			"wpn_fps_lmg_m134_barrel_legendary": "barrel"
+			"wpn_fps_lmg_m134_barrel_legendary": "barrel",
+			"wpn_fps_lmg_m134_body_upper_spikey": "body_kit"
 		}
 	},
 	"p90_dallas_sallad": {
@@ -81,8 +81,8 @@
 		],
 		"parts": {
 			"wpn_fps_shot_r870_b_legendary": "barrel",
-			"wpn_fps_shot_r870_s_legendary": "stock",
-			"wpn_fps_shot_r870_fg_legendary": "foregrip"
+			"wpn_fps_shot_r870_fg_legendary": "foregrip",
+			"wpn_fps_shot_r870_s_legendary": "stock"
 		}
 	},
 	"x_1911_ginger": {
@@ -94,8 +94,8 @@
 			"colt_1911"
 		],
 		"parts": {
-			"wpn_fps_pis_1911_g_legendary": "grip",
-			"wpn_fps_pis_1911_fl_legendary": "laser"
+			"wpn_fps_pis_1911_fl_legendary": "laser",
+			"wpn_fps_pis_1911_g_legendary": "grip"
 		}
 	},
 	"model70_baaah": {
@@ -208,9 +208,9 @@
 		],
 		"parts": {
 			"wpn_fps_ass_m14_b_legendary": "barrel",
+			"wpn_fps_ass_m14_body_lower_legendary": "receiver_lower",
 			"wpn_fps_ass_m14_body_legendary": "stock",
-			"wpn_fps_ass_m14_body_upper_legendary": "receiver_upper",
-			"wpn_fps_ass_m14_body_lower_legendary": "receiver_lower"
+			"wpn_fps_ass_m14_body_upper_legendary": "receiver_upper"
 		}
 	}
 }

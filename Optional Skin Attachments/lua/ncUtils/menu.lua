@@ -16,17 +16,14 @@ function ncUtils.Menu:register_default_callbacks(Mod)
 
 	MenuCallbackHandler[menu_callback_prefix .. "_callback_slider"] = function(self, item)
 		local decimals = item._decimal_count or 2
-		local multiplier = 10 ^ decimals
-		local value = math.floor(item:value() * multiplier + 0.5) / multiplier
-
-		Mod.settings[item:name()] = value
+		Mod.settings[item:name()] = ncUtils.Calc:round(item:value(), decimals)
 	end
 
 	MenuCallbackHandler[menu_callback_prefix .. "_callback_button"] = function(self, item)
 		local name = item:name() .. "_callback"
 		local callback = Mod[name]
 		if type(callback) ~= "function" then
-			log("ncUtils: button callback not found: " .. tostring(Mod.meta.mod_path) .. " -> " .. tostring(name))
+			log("[ncUtils] Menu:register_default_callbacks() button callback not found: " .. tostring(Mod.meta.mod_path) .. " -> " .. tostring(name))
 			return
 		end
 

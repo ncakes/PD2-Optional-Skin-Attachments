@@ -1,5 +1,14 @@
 # Changelog
 
+## v5.0.2
+
+*2026-10-09 - Update 248.2*
+
+- Compatibility fix for mods that fully overwrite `BlackMarketGui:populate_weapon_cosmetics`.
+- Fixed a bug in checking whether a newly equipped skin does not have attachments.
+- Fixed a bug where autoswap legendary attachments would not work when switching between two legendary skins with attachments (only possible when using Super Duper Skin Swapper).
+- Removed some duplicated assets.
+
 ## v5.0.1
 
 *2026-09-21 - Update 248.1*

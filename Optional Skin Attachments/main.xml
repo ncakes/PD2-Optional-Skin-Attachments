@@ -3,45 +3,79 @@
 		<unit_mat_cc path="units/aola/weapons/wpn_fps_snp_model70_pts/wpn_fps_snp_model70_ns_suppressor_addon"/>
 		<texture path="guis/textures/pd2/blackmarket/inv_mod_upper_body"/>
 		<texture path="guis/textures/pd2/blackmarket/inv_mod_lower_body"/>
+	</AddFiles>
+	<AddFiles name="ak74_rodina" directory="assets/legend_icons" file_path="ak74_rodina">
 		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_ass_74_b_legend"/>
 		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_upg_ak_fg_legend"/>
+		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_upg_ak_fl_legend"/>
 		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_upg_ak_g_legend"/>
 		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_upg_ak_s_legend"/>
-		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_upg_ak_fl_legend"/>
+	</AddFiles>
+	<AddFiles name="deagle_bling" directory="assets/legend_icons" file_path="deagle_bling">
 		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_pis_deagle_b_legend"/>
+	</AddFiles>
+	<AddFiles name="flamethrower_mk2_fire" directory="assets/legend_icons" file_path="flamethrower_mk2_fire">
 		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_fla_mk2_body_fierybeast"/>
+	</AddFiles>
+	<AddFiles name="rpg7_boom" directory="assets/legend_icons" file_path="rpg7_boom">
 		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_rpg7_m_grinclown"/>
-		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_lmg_m134_body_upper_spikey"/>
+	</AddFiles>
+	<AddFiles name="m134_bulletstorm" directory="assets/legend_icons" file_path="m134_bulletstorm">
 		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_lmg_m134_barrel_legendary"/>
+		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_lmg_m134_body_upper_spikey"/>
+	</AddFiles>
+	<AddFiles name="p90_dallas_sallad" directory="assets/legend_icons" file_path="p90_dallas_sallad">
 		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_smg_p90_b_legend"/>
+	</AddFiles>
+	<AddFiles name="r870_waves" directory="assets/legend_icons" file_path="r870_waves">
 		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_shot_r870_b_legendary"/>
-		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_shot_r870_s_legendary"/>
 		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_shot_r870_fg_legendary"/>
-		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_pis_1911_g_legendary"/>
+		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_shot_r870_s_legendary"/>
+	</AddFiles>
+	<AddFiles name="x_1911_ginger" directory="assets/legend_icons" file_path="x_1911_ginger">
 		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_pis_1911_fl_legendary"/>
+		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_pis_1911_g_legendary"/>
+	</AddFiles>
+	<AddFiles name="model70_baaah" directory="assets/legend_icons" file_path="model70_baaah">
 		<texture path="guis/dlcs/berry/textures/pd2/blackmarket/icons/mods/wpn_fps_snp_model70_b_legend"/>
 		<texture path="guis/dlcs/berry/textures/pd2/blackmarket/icons/mods/wpn_fps_snp_model70_s_legend"/>
+	</AddFiles>
+	<AddFiles name="par_wolf" directory="assets/legend_icons" file_path="par_wolf">
 		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_lmg_svinet_b_standard"/>
 		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_lmg_svinet_s_legend"/>
+	</AddFiles>
+	<AddFiles name="m16_cola" directory="assets/legend_icons" file_path="m16_cola">
 		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_ass_m16_b_legend"/>
 		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_ass_m16_fg_legend"/>
 		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_ass_m16_s_legend"/>
-		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_pis_judge_g_legend"/>
+	</AddFiles>
+	<AddFiles name="judge_burn" directory="assets/legend_icons" file_path="judge_burn">
 		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_pis_judge_b_legend"/>
+		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_pis_judge_g_legend"/>
+	</AddFiles>
+	<AddFiles name="boot_buck" directory="assets/legend_icons" file_path="boot_buck">
 		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_sho_boot_b_legendary"/>
 		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_sho_boot_fg_legendary"/>
 		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_sho_boot_o_legendary"/>
 		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_sho_boot_s_legendary"/>
+	</AddFiles>
+	<AddFiles name="ksg_same" directory="assets/legend_icons" file_path="ksg_same">
 		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_sho_ksg_b_legendary"/>
+	</AddFiles>
+	<AddFiles name="tecci_grunt" directory="assets/legend_icons" file_path="tecci_grunt">
 		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_ass_tecci_b_legend"/>
 		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_ass_tecci_fg_legend"/>
 		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_ass_tecci_s_legend"/>
+	</AddFiles>
+	<AddFiles name="serbu_lones" directory="assets/legend_icons" file_path="serbu_lones">
 		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_shot_shorty_b_legendary"/>
 		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_shot_shorty_fg_legendary"/>
 		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_shot_shorty_s_legendary"/>
+	</AddFiles>
+	<AddFiles name="new_m14_lones" directory="assets/legend_icons" file_path="new_m14_lones">
 		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_ass_m14_b_legendary"/>
+		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_ass_m14_body_lower_legendary"/>
 		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_ass_m14_body_legendary"/>
 		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_ass_m14_body_upper_legendary"/>
-		<texture path="guis/textures/pd2/blackmarket/icons/mods/wpn_fps_ass_m14_body_lower_legendary"/>
 	</AddFiles>
 </mod>

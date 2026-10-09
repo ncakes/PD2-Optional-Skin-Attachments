@@ -28,8 +28,8 @@ function ncUtils.Settings:load(Mod)
 		return
 	end
 
+	--load_json guarantees a table or nil
 	local data = ncUtils.FileIO:load_json(save_file)
-	data = type(data) == "table" and data or nil
 
 	local migrated = false
 	if Mod.save_migration then
@@ -53,50 +53,63 @@ function ncUtils.Settings:load(Mod)
 	end
 end
 
---Called internally by load which already checked that Mod.meta exists.
---Only do a few minimal safety checks.
+--No safety checks. Caller checks that Mod has the necessary definitions.
 function ncUtils.Settings:_migrate(data, Mod)
-	--Check data is valid.
-	data = type(data) == "table" and data or nil
 	--Name of the save file that was loaded. nil if no valid data was loaded.
 	local loaded_save = data and Mod.meta.save_file
-	if not Mod.save_migration then
-		return data, false
-	end
 
+	--Migration entries are ordered newest to oldest and processed in order.
+	--Processing stops after the first successfully loaded save.
+	--If we already have a loaded_save, only the first migration entry is processed.
+	--Only the first entry may omit file to migrate keys in the current save.
+	--Later entries must specify file; otherwise they cannot load any data.
 	local migrated = false
 	for _, migration in ipairs(Mod.save_migration) do
-		--If no data, load the legacy save file if the mod declared one.
-		--Otherwise, we only check if there are settings keys to migrate.
+		--If no data, try to load the legacy save file.
 		if not data and migration.file then
-			local new_data = ncUtils.FileIO:load_json(migration.file)
-			if type(new_data) == "table" then
-				data = new_data
+			data = ncUtils.FileIO:load_json(migration.file)
+			if data then
 				loaded_save = migration.file
 				migrated = true
 			end
 		end
 
-		--If we loaded a valid legacy save, we always have a save match.
-		--If the initial load was valid, we also have a match if migration.file was not declared.
-		local save_match = loaded_save == migration.file or not migration.file
-		--We can migrate if we have valid data, a save match, and the migration declares a key map.
-		local can_migrate = data and save_match and migration.key_map
-		if can_migrate then
-			for old_key, new_key in pairs(migration.key_map) do
-				local new_key_value = data[new_key]
-				local old_key_value = data[old_key]
-				if new_key_value == nil and old_key_value ~= nil then
-					if type(old_key_value) == type(Mod.settings[new_key]) then
-						data[new_key] = old_key_value
-						data[old_key] = nil
-						migrated = true
+		if data then
+			--Migrate keys only when the entry matches the loaded save.
+			--For current-save migration, file can be omitted.
+			local save_match = loaded_save == migration.file or not migration.file
+			local can_migrate_keys = save_match and migration.key_map
+			if can_migrate_keys then
+				--key_map_only is only supported for legacy saves.
+				--Ignore it for current saves to avoid discarding existing settings.
+				local key_map_only = migration.key_map_only
+				if key_map_only and loaded_save == Mod.meta.save_file then
+					log("[ncUtils] Settings:_migrate() key_map_only not allowed for current save: " .. Mod.meta.save_file)
+					key_map_only = false
+				end
+
+				local result = {}
+				--Preserve existing data unless only mapped keys should be kept.
+				if not key_map_only then
+					for k, v in pairs(data) do
+						result[k] = v
 					end
 				end
+
+				for old_key, new_key in pairs(migration.key_map) do
+					local new_value = data[new_key]
+					local old_value = data[old_key]
+					if new_value == nil and old_value ~= nil then
+						new_value = old_value
+						migrated = true
+					end
+					result[new_key] = new_value
+				end
+
+				data = result
 			end
-		end
-		--Stop as soon as we migrated.
-		if migrated then
+
+			--Stop as soon as a save is loaded.
 			break
 		end
 	end
