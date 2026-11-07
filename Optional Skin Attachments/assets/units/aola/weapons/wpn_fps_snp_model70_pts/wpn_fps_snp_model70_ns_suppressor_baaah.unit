@@ -1,5 +1,5 @@
 <unit type="wpn" slot="1">
-	<object file="units/aola/weapons/wpn_fps_snp_model70_pts/wpn_fps_snp_model70_ns_suppressor_addon" />
+	<object file="units/aola/weapons/wpn_fps_snp_model70_pts/wpn_fps_snp_model70_ns_suppressor_baaah" />
 	<extensions>
 		<extension name="unit_data" class="ScriptUnitData" />
 	</extensions>

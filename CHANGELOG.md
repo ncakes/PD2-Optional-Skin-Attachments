@@ -1,5 +1,26 @@
 # Changelog
 
+## v5.1
+
+*2026-11-07 - Update 248.2*
+
+- Legendary barrel extension fixes courtesy of AkiraDragunDaishiyu:
+	- Fixed alignment of barrel extensions on the Anarcho Barrel.
+	- [BeardLib required] Fixed alignment of barrel extensions on the Astatoz Barrel.
+	- [BeardLib required] Fixed alignment of barrel extensions on the Big Kahuna Barrel.
+- Alamo Dallas fixes:
+	- Default Kobus 90 barrel added to the Alamo Dallas blueprint to prevent crashes when equipping barrel extensions.
+	- [BeardLib required] Added an edited model of the default Kobus 90 barrel to make it invisible when using the Alamo Dallas Body Kit.
+- Fixed missing iron sights when equipping the Midas Touch Barrel on the Akimbo Deagle.
+- Restored the ability to use the Iron Sight on the Don Pastrami Barrel (removed from the base game in U242).
+- Santa's Slayers Laser no longer blocks use of sight attachments.
+- Vlad's Rodina Grip blocks Wooden Sniper Stock.
+- Reworked handling of some legendary attachment fixes to use overrides instead of adds/forbids tables.
+	- Default Reinfeld 880 grip added to the Big Kahuna blueprint. The Big Kahuna Stock hides the default grip.
+	- Default Locomotive 12G grip added to the Demon blueprint. The Demon Stock hides the default grip.
+	- Default Bootleg barrel extension added to the Mars Ultor blueprint. The Mars Ultor Barrel hides the default barrel extension.
+- Fixed missing inventory transaction identifiers when changing weapon skins.
+
 ## v5.0.2
 
 *2026-10-09 - Update 248.2*

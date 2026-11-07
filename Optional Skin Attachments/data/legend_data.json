@@ -90,8 +90,8 @@
 		"name_id": "bm_wskn_x_1911_ginger",
 		"icon": "guis/dlcs/cash/safes/flake/weapon_skins/x_1911_ginger",
 		"weapons": [
-			"x_1911",
-			"colt_1911"
+			"colt_1911",
+			"x_1911"
 		],
 		"parts": {
 			"wpn_fps_pis_1911_fl_legendary": "laser",

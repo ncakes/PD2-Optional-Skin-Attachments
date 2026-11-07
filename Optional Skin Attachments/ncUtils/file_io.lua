@@ -169,8 +169,7 @@ function ncUtils.FileIO:create_file(path)
 
 	local file = io.open(path, "w")
 	if file then
-		file:close()
-		return true
+		return file:close() ~= nil
 	end
 
 	return false
@@ -268,17 +267,16 @@ function ncUtils.FileIO:copy_file(old_path, new_path)
 		return false
 	end
 
-	if not self:_create_parent_directory(new_path) then
-		return false
-	end
-
 	local source_file = io.open(old_path, "rb")
 	if not source_file then
 		return false
 	end
 	local source_data = source_file:read("*all")
-	source_file:close()
-	if source_data == nil then
+	if not source_file:close() or source_data == nil then
+		return false
+	end
+
+	if not self:_create_parent_directory(new_path) then
 		return false
 	end
 
@@ -286,15 +284,10 @@ function ncUtils.FileIO:copy_file(old_path, new_path)
 	if not destination_file then
 		return false
 	end
+
 	local success = destination_file:write(source_data)
-	destination_file:close()
-
-	if not success then
-		os.remove(new_path)
-		return false
-	end
-
-	return true
+	local closed = destination_file:close()
+	return success ~= nil and closed ~= nil
 end
 
 function ncUtils.FileIO:move_file(old_path, new_path)
@@ -378,7 +371,7 @@ function ncUtils.FileIO:save_json(path, data, overwrite)
 	end
 
 	if type(data) ~= "table" then
-		log("[ncUtils] FileIO:save_json() expected table, got " .. type(data) .. ": " .. path)
+		log(string.format("[ncUtils] FileIO:save_json() expected table, got %s: %s", type(data), path))
 		return false
 	end
 
@@ -405,9 +398,7 @@ function ncUtils.FileIO:save_json(path, data, overwrite)
 	end
 
 	local success = file:write(encoded_data)
-	file:close()
-
-	return success ~= nil
+	return file:close() ~= nil and success ~= nil
 end
 
 function ncUtils.FileIO:load_json(path)
@@ -422,16 +413,15 @@ function ncUtils.FileIO:load_json(path)
 	end
 
 	local contents = file:read("*all")
-	file:close()
-
-	if contents == nil then
+	if not file:close() or contents == nil then
 		return nil
 	end
 
+	--SuperBLT already pcalls decode.
 	local data = json.decode(contents)
 
 	if data ~= nil and type(data) ~= "table" then
-		log("[ncUtils] FileIO:load_json() expected decoded table, got " .. type(data) .. ": " .. path)
+		log(string.format("[ncUtils] FileIO:load_json() expected decoded table, got %s: %s", type(data), path))
 		return nil
 	end
 

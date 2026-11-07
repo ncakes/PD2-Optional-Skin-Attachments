@@ -1,15 +1,14 @@
 if _G.OSA then return end
-dofile(ModPath.."lua/ncUtils/init.lua")
 
+---@class OSA
 _G.OSA = {}
 OSA.meta = {
 	mod_path = ModPath,
-	loc_path = ModPath.."loc/",
+	loc_path = ModPath .. "loc/",
 	language = "en",
 	menu_id = "osa_options_menu",
 	menu_callback_prefix = "osa",
-	menu_file = ModPath.."menu/options.json",
-	save_file = SavePath.."osa_settings.json",
+	save_file = SavePath .. "osa_settings.json",
 }
 
 OSA.settings = {
@@ -107,7 +106,11 @@ Hooks:Add("MenuManagerInitialize", "OSA-Hooks-MenuManagerInitialize", function(m
 		ncUtils.Settings:save(OSA)
 	end
 
-	MenuHelper:LoadFromJsonFile(OSA.meta.menu_file, OSA, OSA.settings)
+	MenuHelper:LoadFromJsonFile(
+		OSA.meta.mod_path .. "menu/options.json",
+		OSA,
+		OSA.settings
+	)
 end)
 
 --Add SDSS preset button to menu

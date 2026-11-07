@@ -1,6 +1,10 @@
 <mod name="OSA Assets" author="github.com/ncakes" min_lib_version="3.38">
 	<AddFiles directory="assets">
-		<unit_mat_cc path="units/aola/weapons/wpn_fps_snp_model70_pts/wpn_fps_snp_model70_ns_suppressor_addon"/>
+		<unit_mat_cc path="units/aola/weapons/wpn_fps_snp_model70_pts/wpn_fps_snp_model70_ns_suppressor_baaah" auto_cp="true"/>
+		<unit_obj path="units/aola/weapons/wpn_fps_smg_p90_pts/wpn_fps_smg_p90_b_short_dallas" auto_cp="true"/>
+		<model path="units/payday2_cash/safes/cola/weapons/wpn_fps_ass_m16_legendary/wpn_fps_ass_m16_b_legend"/>
+		<model path="units/payday2_cash/safes/surf/weapons/wpn_fps_shot_r870_b_legend/wpn_fps_shot_r870_b_legendary"/>
+		<model path="units/payday2_cash/safes/surf/weapons/wpn_fps_shot_r870_b_legend/wpn_third_shot_r870_b_legendary"/>
 		<texture path="guis/textures/pd2/blackmarket/inv_mod_upper_body"/>
 		<texture path="guis/textures/pd2/blackmarket/inv_mod_lower_body"/>
 	</AddFiles>

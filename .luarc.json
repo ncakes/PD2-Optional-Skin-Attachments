@@ -1,0 +1,9 @@
+{
+	"runtime.version": "Lua 5.1",
+	"diagnostics.enable": true,
+	"diagnostics.globals": [],
+	"workspace.library": [
+		"C:\\Tools\\LuaLS-PD2"
+	],
+	"workspace.checkThirdParty": false
+}

@@ -20,7 +20,7 @@ Hooks:PostHook(BlackMarketTweakData, "_init_weapon_skins", "OSA-PostHook-BlackMa
 	end
 
 	--Remove unique name so that legendary skins can be renamed
-	--Unlock first generation legendary skins
+	--Unlock first-generation legendary skins
 	for _, skin in pairs(self.weapon_skins) do
 		skin.unique_name_id = nil
 		if OSA.settings.gen1_legend_support then
@@ -28,12 +28,35 @@ Hooks:PostHook(BlackMarketTweakData, "_init_weapon_skins", "OSA-PostHook-BlackMa
 		end
 	end
 
-	--If we deep clone a Judge Anarcho blueprint and try to put a barrel extension on it, the game crashes
-	--But if we start with a default Judge, put all the Anarcho attachments on it, and then equip a barrel extension, it doesn't crash
-	--Apparently it's because the Anarcho doesn't have the the default Judge barrel in its blueprint
-	--I guess for some reason the Anarcho barrel doesn't replace the default barrel?
-	--Either way, this fixes the crash
-	if not table.contains(self.weapon_skins["judge_burn"].default_blueprint, "wpn_fps_pis_judge_b_standard") then
-		table.insert(self.weapon_skins["judge_burn"].default_blueprint, "wpn_fps_pis_judge_b_standard")
+	local function safe_add_blueprint(skin_id, part_id)
+		local blueprint = self.weapon_skins[skin_id].default_blueprint
+		if not blueprint then
+			log("[OSA] No blueprint for skin_id " .. skin_id)
+			return
+		end
+		if not table.contains(blueprint, part_id) then
+			table.insert(blueprint, part_id)
+		end
 	end
+
+	--The Judge Anarcho blueprint omits the default Judge barrel (type "slide").
+	--The legendary barrel is type "barrel", so it does not replace the default slide.
+	--Barrel extensions expect a slide parent and can crash when none exists.
+	--Keep the default barrel in the blueprint to ensure multiplayer compatibility.
+	safe_add_blueprint("judge_burn", "wpn_fps_pis_judge_b_standard")
+
+	--The Alamo Dallas blueprint omits the default barrel (type "barrel").
+	--The legendary barrel is type "slide", so it does not replace the default barrel.
+	--Barrel extensions expect a barrel parent and can crash when none exists.
+	--Keep the default barrel in the blueprint to ensure multiplayer compatibility.
+	safe_add_blueprint("p90_dallas_sallad", "wpn_fps_smg_p90_b_short")
+
+	--Big Kahuna. Add default grip.
+	safe_add_blueprint("r870_waves", "wpn_fps_upg_m4_g_standard")
+
+	--Demon. Add default grip.
+	safe_add_blueprint("serbu_lones", "wpn_fps_upg_m4_g_standard")
+
+	--Mars Ultor. Add default barrel extension.
+	safe_add_blueprint("tecci_grunt", "wpn_fps_ass_tecci_ns_standard")
 end)

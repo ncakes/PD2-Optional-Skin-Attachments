@@ -2,6 +2,10 @@ _G[ModPath] = _G[ModPath] or {}
 if _G[ModPath][RequiredScript] then return end
 _G[ModPath][RequiredScript] = true
 
+local INV_REMOVE = Idstring("remove_from_inventory")
+local CRAFT_ADD = Idstring("add_to_crafted")
+local CRAFT_REMOVE = Idstring("remove_from_crafted")
+
 --Refresh parts after Steam inventory update.
 Hooks:PostHook(BlackMarketManager, "tradable_update", "OSA-PostHook-BlackMarketManager:tradable_update", function(self, ...)
 	self:osa_set_visible_parts()
