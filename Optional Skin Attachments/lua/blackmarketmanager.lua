@@ -345,11 +345,11 @@ end
 local orig_BlackMarketManager__set_weapon_cosmetics = BlackMarketManager._set_weapon_cosmetics
 function BlackMarketManager:_set_weapon_cosmetics(...)
 	local mode = OSA._mode
+	OSA._mode = nil
 	if not mode then
 		--I'm not touching this
 		return orig_BlackMarketManager__set_weapon_cosmetics(self, ...)
 	end
-	OSA._mode = nil
 	return self:osa_set_weapon_cosmetics(mode, ...)
 end
 
@@ -426,15 +426,27 @@ function BlackMarketManager:osa_set_weapon_cosmetics(mode, category, slot, cosme
 end
 
 local orig_BlackMarketManager_on_remove_weapon_cosmetics = BlackMarketManager.on_remove_weapon_cosmetics
-function BlackMarketManager:on_remove_weapon_cosmetics(...)
+function BlackMarketManager:on_remove_weapon_cosmetics(category, slot, skip_update)
 	local mode = OSA._mode
+	OSA._mode = nil
+
+	if not mode and skip_update then
+		--Only recover during skin cleaup if we have data.
+		local crafted = self:get_crafted_category_slot(category, slot)
+		local skin_id = crafted and crafted.cosmetics and crafted.cosmetics.id
+		local skin_data = skin_id and tweak_data.blackmarket.weapon_skins[skin_id]
+		if skin_data and skin_data.default_blueprint then
+			mode = "keep"
+		end
+	end
+
 	if not mode then
 		--I'm not touching this
-		orig_BlackMarketManager_on_remove_weapon_cosmetics(self, ...)
+		orig_BlackMarketManager_on_remove_weapon_cosmetics(self, category, slot, skip_update)
 		return
 	end
-	OSA._mode = nil
-	return self:osa_on_remove_weapon_cosmetics(mode, ...)
+
+	return self:osa_on_remove_weapon_cosmetics(mode, category, slot, skip_update)
 end
 
 function BlackMarketManager:osa_on_remove_weapon_cosmetics(mode, category, slot, skip_update)

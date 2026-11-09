@@ -123,8 +123,7 @@ Hooks:PreHook(WeaponFactoryTweakData, "_set_inaccessibles", "OSA-PreHook-WeaponF
 			--Alamo Dallas "hide" default barrel.
 			--Can't use standard dummy because it messes up the barrel extensions.
 			local unit = "units/aola/weapons/wpn_fps_smg_p90_pts/wpn_fps_smg_p90_b_short_dallas"
-			override_unit("wpn_fps_smg_p90_b_legend", "wpn_fps_smg_p90_b_short", unit
-			)
+			override_unit("wpn_fps_smg_p90_b_legend", "wpn_fps_smg_p90_b_short", unit)
 		end
 		do
 			--Don Pastrami suppressor fix

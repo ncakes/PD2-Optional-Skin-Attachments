@@ -1,5 +1,11 @@
 # Changelog
 
+## v5.1.1
+
+*2026-11-09 - Update 248.2*
+
+- OSA will try to keep attachments when skins are automatically removed if the skin definition still exists (e.g. when you sell a skin on Steam). If the skin definition is missing (e.g. because you uninstalled a custom skin mod), OSA leaves the removal to the base game.
+
 ## v5.1
 
 *2026-11-07 - Update 248.2*

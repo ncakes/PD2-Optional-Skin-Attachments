@@ -2,7 +2,7 @@
 	"osa_options_menu_title": "Optional Skin Attachments",
 	"osa_options_menu_desc": "Optional Skin Attachments mod options.",
 	"osa_gen1_legend_support_title": "Customize legendary skins",
-	"osa_gen1_legend_support_desc": "Allow full costomization of first-generation legendary skins. Restart required.\nAutomatically enabled when using Super Duper Skin Swapper.",
+	"osa_gen1_legend_support_desc": "Allow full customization of first-generation legendary skins. Restart required.\nAutomatically enabled when using Super Duper Skin Swapper.",
 	"osa_hide_unowned_legend_title": "Hide Unowned Legendary Attachments",
 	"osa_hide_unowned_legend_desc": "Hide legendary attachments for skins you do not own.\nLegendary attachments are always hidden if customize legendary skins is disabled.",
 	"osa_always_keep_title": "Keep attachments by default",
